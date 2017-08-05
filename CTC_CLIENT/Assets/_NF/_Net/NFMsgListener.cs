@@ -959,6 +959,14 @@ namespace NFrame
 
 		private void EGMI_ACK_SKILL_OBJECTX(NFMsg.MsgBase xMsg)
 		{
+			NFMsg.ReqAckUseSkill xData = new NFMsg.ReqAckUseSkill();
+			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckUseSkill)) as NFMsg.ReqAckUseSkill;
+
+			NFGUID xUser = NFNetController.PBToNF (xData.user);
+			GameObject xGameObject = NFRender.Instance.GetObject (xUser);
+			if (xGameObject)
+			{
+			}
 
 		}
 
@@ -974,6 +982,8 @@ namespace NFrame
 		{
 			NFMsg.AckMiningTitle xData = new NFMsg.AckMiningTitle();
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.AckMiningTitle)) as NFMsg.AckMiningTitle;
+
+
 		}
 
 		private void EGMI_ACK_SEARCH_OPPNENT(NFMsg.MsgBase xMsg)

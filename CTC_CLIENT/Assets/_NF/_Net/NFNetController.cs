@@ -173,10 +173,8 @@ namespace NFrame
 	    public string strPassword = "123456";
 	    public string strRoleName = "";
 		public NFGUID xMainRoleID = new NFGUID();//Ö÷½ÇID
-	    public NFGUID xFocusBookID = new NFGUID();//BOOKID
 
 		public PLAYER_STATE mPlayerState = PLAYER_STATE.E_NONE;
-		public NFGUID mxFightHero = new NFGUID();
 
 		public ArrayList aWorldList = new ArrayList();
 		public ArrayList aServerList = new ArrayList();

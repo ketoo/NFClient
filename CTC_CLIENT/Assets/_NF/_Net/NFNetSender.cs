@@ -602,32 +602,24 @@ namespace NFrame
 			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_STATE_SYNC, mxBody);
 
 		}
+
 		//有可能是他副本的NPC移动,因此增加64对象ID
-		public void RequireUseSkill(NFrame.NFGUID objectID, string strKillID, NFrame.NFGUID nTargetID, float fNowX, float fNowZ, float fTarX, float fTarZ)
+		public void RequireUseSkill(NFrame.NFGUID objectID, string strKillID, Int32 index, List<NFrame.NFGUID> nTargetID)
 		{
-			NFMsg.Vector3 xNowPos = new NFMsg.Vector3();
-			NFMsg.Vector3 xTarPos = new NFMsg.Vector3();
-
-			xNowPos.x = fNowX;
-			xNowPos.y = 0.0f;
-			xNowPos.z = fNowZ;
-			xTarPos.x = fTarX;
-			xTarPos.y = 0.0f;
-			xTarPos.z = fTarZ;
-
 			NFMsg.ReqAckUseSkill xData = new NFMsg.ReqAckUseSkill();
 			xData.user = NFNetController.NFToPB(objectID);
 			xData.skill_id = System.Text.Encoding.Default.GetBytes(strKillID);
-			xData.tar_pos = xTarPos;
-			xData.now_pos = xNowPos;
+			xData.use_index = index;
 
-			NFMsg.EffectData xEffData = new NFMsg.EffectData();
-			xEffData.effect_ident = (NFNetController.NFToPB(nTargetID));
-			xEffData.effect_value = 0;
-			xEffData.effect_rlt = 0;
+			foreach (NFGUID id in nTargetID)
+			{
+				NFMsg.EffectData xEffData = new NFMsg.EffectData();
+				xEffData.effect_ident = (NFNetController.NFToPB(id));
+				xEffData.effect_value = 0;
+				xEffData.effect_rlt = 0;
 
-			xData.effect_data.Add(xEffData);
-
+				xData.effect_data.Add(xEffData);
+			}
 
 			mxBody.SetLength(0);
 			mxSerializer.Serialize(mxBody, xData);
@@ -635,7 +627,6 @@ namespace NFrame
 
 			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_SKILL_OBJECTX, mxBody);
 		}
-
 		public void RequireUseItem(NFrame.NFGUID objectID, string strItemID, NFrame.NFGUID nTargetID)
 		{
 			NFMsg.ReqAckUseItem xData = new NFMsg.ReqAckUseItem();
@@ -680,6 +671,33 @@ namespace NFrame
 			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_SWAP_SCENE, mxBody);
 		}
 
+		public void RequireSwapScene(NFrame.NFGUID objectID, int nSceneID)
+		{
+			NFMsg.ReqAckSwapScene xData = new NFMsg.ReqAckSwapScene();
+			xData.transfer_type = NFMsg.ReqAckSwapScene.EGameSwapType.EGST_NARMAL;
+			xData.scene_id = nSceneID;
+			xData.line_id = -1;
+
+			mxBody.SetLength(0);
+			mxSerializer.Serialize(mxBody, xData);
+
+
+			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_SWAP_SCENE, mxBody);
+		}
+
+		public void RequireSwapScene(NFrame.NFGUID objectID, int nTransferType, int nSceneID)
+		{
+			NFMsg.ReqAckSwapScene xData = new NFMsg.ReqAckSwapScene();
+			xData.transfer_type = (NFMsg.ReqAckSwapScene.EGameSwapType)nTransferType;
+			xData.scene_id = nSceneID;
+			xData.line_id = -1;
+
+			mxBody.SetLength(0);
+			mxSerializer.Serialize(mxBody, xData);
+
+
+			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_SWAP_SCENE, mxBody);
+		}
 
 		public void RequireAcceptTask(NFrame.NFGUID objectID, string strTaskID)
 		{
