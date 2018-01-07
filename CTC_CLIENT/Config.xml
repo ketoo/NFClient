@@ -3,7 +3,7 @@
 <XML>
 	<Servers>
 		<!--	<Server ID="1" IP = "104.160.35.67" Port="14001"/>-->
-		<Server ID="2" IP = "192.168.13.142" Port="14001"/>
+		<Server ID="2" IP = "192.168.13.151" Port="14001"/>
 	</Servers>
 	<Evironment>
 		<DataPath ID="./"/>
