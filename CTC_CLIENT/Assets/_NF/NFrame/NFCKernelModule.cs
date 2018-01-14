@@ -212,8 +212,11 @@ namespace NFrame
         {
             foreach (NFGUID id in mhtObject.Keys)
             {
-                NFIObject xGameObject = (NFIObject)mhtObject[id];
-                xGameObject.GetHeartBeatManager().Update(fTime);
+				NFIObject xGameObject;
+				if (mhtObject.TryGetValue (id, out xGameObject))
+				{
+		           xGameObject.GetHeartBeatManager().Update(fTime);
+				}
             }
 
             return true;

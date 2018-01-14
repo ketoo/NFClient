@@ -61,12 +61,13 @@ namespace NFrame
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_OBJECT_LEAVE, EGMI_ACK_OBJECT_LEAVE);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_MOVE, EGMI_ACK_MOVE);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_MOVE_IMMUNE, EGMI_ACK_MOVE_IMMUNE);
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_STATE_SYNC, EGMI_ACK_STATE_SYNC);
 
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_INT, EGMI_ACK_PROPERTY_INT);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_FLOAT, EGMI_ACK_PROPERTY_FLOAT);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_STRING, EGMI_ACK_PROPERTY_STRING);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_OBJECT, EGMI_ACK_PROPERTY_OBJECT);
+			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_VECTOR2, EGMI_ACK_PROPERTY_VECTOR2);
+			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_PROPERTY_VECTOR3, EGMI_ACK_PROPERTY_VECTOR3);
 
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_RECORD_INT, EGMI_ACK_RECORD_INT);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_RECORD_FLOAT, EGMI_ACK_RECORD_FLOAT);
@@ -81,16 +82,10 @@ namespace NFrame
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_DATA_FINISHED, EGMI_ACK_DATA_FINISHED);
 
 
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_SKILL_OBJECTX, EGMI_ACK_SKILL_OBJECTX);
 			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_CHAT, EGMI_ACK_CHAT);
 
-
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGEC_ACK_MINING_TITLE, EGEC_ACK_MINING_TITLE);
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_SEARCH_OPPNENT, EGMI_ACK_SEARCH_OPPNENT);
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_START_OPPNENT, EGMI_ACK_START_OPPNENT);
-			mxNetListener.RegisteredDelegation(NFMsg.EGameMsgID.EGMI_ACK_END_OPPNENT, EGMI_ACK_END_OPPNENT);
-
 			NFCKernelModule.Instance.RegisterClassCallBack (NFrame.Player.ThisName, ClassEventHandler);
+			NFCKernelModule.Instance.RegisterClassCallBack (NFrame.NPC.ThisName, ClassEventHandler);
         }
 
         private void EGMI_EVENT_RESULT(NFMsg.MsgBase xMsg)
@@ -259,8 +254,8 @@ namespace NFrame
 			}
 			else
 			{
-				NFCSectionManager.Instance.SetGameState(NFCSection.UI_SECTION_STATE.UISS_CREATEHALL);
-
+				//NFCSectionManager.Instance.SetGameState(NFCSection.UI_SECTION_STATE.UISS_CREATEHALL);
+				mxNetController.mxNetSender.RequireCreateRole(mxNetController.strAccount, mxNetController.strAccount, 0, 0, mxNetController.nServerID);
 				Debug.Log("No Role!, require to create a new role! ");
 			}
 		}
@@ -274,8 +269,8 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.AckEventResult)) as NFMsg.AckEventResult;
 
 			NFNetController.Instance.xMainRoleID = NFNetController.PBToNF(xData.event_object);
-			NFRender.Instance.LoadScene((int)xData.event_code);
-
+			//NFRender.Instance.LoadScene((int)xData.event_code);
+			//可以播放过图动画场景
 		}
 
 		private void EGMI_ACK_SWAP_SCENE(NFMsg.MsgBase xMsg)
@@ -283,14 +278,16 @@ namespace NFrame
 			NFMsg.ReqAckSwapScene xData = new NFMsg.ReqAckSwapScene();
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckSwapScene)) as NFMsg.ReqAckSwapScene;
 
-			Debug.Log ("SWAP_SCENE: " + xData.scene_id);
+			Debug.Log ("SWAP_SCENE: " + xData.scene_id + " " + xData.x + "," + xData.y + "," + xData.z);
 
 			NFMsg.AckMiningTitle xTileData = new NFMsg.AckMiningTitle();
 			if (null != xData.data && xData.data.Length > 0)
 			{
-				xTileData = mxSerializer.Deserialize(new MemoryStream(System.Text.Encoding.Default.GetBytes(xData.data)), null, typeof(NFMsg.AckMiningTitle)) as NFMsg.AckMiningTitle;
+				xTileData = mxSerializer.Deserialize(new MemoryStream(xData.data), null, typeof(NFMsg.AckMiningTitle)) as NFMsg.AckMiningTitle;
 			}
+
 			NFRender.Instance.LoadScene(xData.scene_id, xData.x, xData.y, xData.z, xTileData);
+			//重置主角坐标到出生点
 
 		}
 
@@ -300,6 +297,7 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckEnterGameSuccess)) as NFMsg.ReqAckEnterGameSuccess;
 
 			// 去掉遮场景的ui
+			//主角，等怪物enable，并且充值在相应的position
 			//NFRender.Instance.LoadScene(xData.scene_id, xData.x, xData.y, xData.z);
 		}
 
@@ -316,14 +314,14 @@ namespace NFrame
 				NFVector3 vPos = new NFVector3 (xInfo.x, xInfo.y, xInfo.z);
 
 				NFDataList var = new NFDataList ();
-				var.AddString ("Position");
+				var.AddString (NFrame.NPC.Position);
 				var.AddVector3 (vPos);
 
 				NFGUID xObjectID = NFNetController.PBToNF(xInfo.object_guid);
 				string strClassName = System.Text.Encoding.Default.GetString (xInfo.class_id);
 				string strConfigID = System.Text.Encoding.Default.GetString (xInfo.config_id);
 
-				Debug.Log ("new " + strClassName + " Object: " + xObjectID.ToString() + " " +xInfo.x + " " + xInfo.y + " " + xInfo.z);
+				Debug.Log ("new Object enter: " + strClassName + xObjectID.ToString() + " " +xInfo.x + " " + xInfo.y + " " + xInfo.z);
 
 				ObjectDataBuff xDataBuff = new ObjectDataBuff ();
 				mxObjectDataBuff.Add (xObjectID, xDataBuff);
@@ -359,26 +357,13 @@ namespace NFrame
 				NFMsg.ObjectRecordList xObjectRecordList = xData.multi_player_record[i];
 				NFGUID xObjectID = NFNetController.PBToNF (xObjectRecordList.player_id);
 
+				//Debug.Log ("new record enter Object: " + xObjectID.ToString () );
+
 				ObjectDataBuff xDataBuff;
 				if (mxObjectDataBuff.TryGetValue (xObjectID, out xDataBuff))
 				{
 					xDataBuff.xRecordList = xObjectRecordList;
 				}
-				/*
-				for (int j = 0; j < xObjectRecordList.record_list.Count; j++)
-				{
-					NFMsg.ObjectRecordBase xObjectRecordBase = xObjectRecordList.record_list[j];
-					string srRecordName = System.Text.Encoding.Default.GetString(xObjectRecordBase.record_name);
-					Debug.Log ("EGMI_ACK_OBJECT_RECORD_ENTRY " + xObjectRecordList.player_id.index + "  " + srRecordName + " Data line: " + xObjectRecordBase.row_struct.Count);
-
-					for (int k = 0; k < xObjectRecordBase.row_struct.Count; ++k )
-					{
-						NFMsg.RecordAddRowStruct xAddRowStruct = xObjectRecordBase.row_struct[k];
-
-						ADD_ROW(xObjectID, System.Text.Encoding.Default.GetString(xObjectRecordBase.record_name), xAddRowStruct);
-					}
-				}
-				*/
 			}
 		}
 
@@ -392,94 +377,37 @@ namespace NFrame
 				NFMsg.ObjectPropertyList xPropertyData = xData.multi_player_property[i];
 				NFGUID xObjectID = NFNetController.PBToNF (xPropertyData.player_id);
 
+				//Debug.Log ("new property enter Object: " + xObjectID.ToString () );
+
 				ObjectDataBuff xDataBuff;
 				if (mxObjectDataBuff.TryGetValue (xObjectID, out xDataBuff))
 				{
 					xDataBuff.xPropertyList = xPropertyData;
 				}
-				/*
-				NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xPropertyData.player_id));
-				NFIPropertyManager xPropertyManager = go.GetPropertyManager();
-
-				for (int j = 0; j < xPropertyData.property_int_list.Count; j++)
-				{
-					string strPropertyName = System.Text.Encoding.Default.GetString(xPropertyData.property_int_list[j].property_name);
-					NFIProperty xProperty = xPropertyManager.GetProperty(strPropertyName);
-					if (null == xProperty)
-					{
-						NFDataList varList = new NFDataList();
-						varList.AddInt(0);
-
-						xProperty = xPropertyManager.AddProperty(strPropertyName, varList);
-					}
-
-					xProperty.SetInt(xPropertyData.property_int_list[j].data);
-				}
-
-				for (int j = 0; j < xPropertyData.property_float_list.Count; j++)
-				{
-					string strPropertyName = System.Text.Encoding.Default.GetString(xPropertyData.property_float_list[j].property_name);
-					NFIProperty xProperty = xPropertyManager.GetProperty(strPropertyName);
-					if (null == xProperty)
-					{
-						NFDataList varList = new NFDataList();
-						varList.AddFloat(0);
-
-						xProperty = xPropertyManager.AddProperty(strPropertyName, varList);
-					}
-
-					xProperty.SetFloat(xPropertyData.property_float_list[j].data);
-				}
-
-				for (int j = 0; j < xPropertyData.property_string_list.Count; j++)
-				{
-					string strPropertyName = System.Text.Encoding.Default.GetString(xPropertyData.property_string_list[j].property_name);
-					NFIProperty xProperty = xPropertyManager.GetProperty(strPropertyName);
-					if (null == xProperty)
-					{
-						NFDataList varList = new NFDataList();
-						varList.AddString("");
-
-						xProperty = xPropertyManager.AddProperty(strPropertyName, varList);
-					}
-
-					xProperty.SetString(System.Text.Encoding.Default.GetString(xPropertyData.property_string_list[j].data));
-				}
-
-				for (int j = 0; j < xPropertyData.property_object_list.Count; j++)
-				{
-					string strPropertyName = System.Text.Encoding.Default.GetString(xPropertyData.property_object_list[j].property_name);
-					NFIProperty xProperty = xPropertyManager.GetProperty(strPropertyName);
-					if (null == xProperty)
-					{
-						NFDataList varList = new NFDataList();
-						varList.AddObject(new NFGUID());
-
-						xProperty = xPropertyManager.AddProperty(strPropertyName, varList);
-					}
-
-					xProperty.SetObject(NFNetController.PBToNF(xPropertyData.property_object_list[j].data));
-				}
-				*/
 			}
 		}
 
 		private void AttachObjectData(NFGUID self)
 		{
+			//Debug.Log ("AttachObjectData : " + self.ToString () );
+
 			ObjectDataBuff xDataBuff;
 			if (mxObjectDataBuff.TryGetValue (self, out xDataBuff))
 			{
 				////////////////record
-				for (int j = 0; j < xDataBuff.xRecordList.record_list.Count; j++)
+				if (xDataBuff.xRecordList != null)
 				{
-					NFMsg.ObjectRecordBase xObjectRecordBase = xDataBuff.xRecordList.record_list[j];
-					string srRecordName = System.Text.Encoding.Default.GetString(xObjectRecordBase.record_name);
-
-					for (int k = 0; k < xObjectRecordBase.row_struct.Count; ++k )
+					for (int j = 0; j < xDataBuff.xRecordList.record_list.Count; j++)
 					{
-						NFMsg.RecordAddRowStruct xAddRowStruct = xObjectRecordBase.row_struct[k];
+						NFMsg.ObjectRecordBase xObjectRecordBase = xDataBuff.xRecordList.record_list [j];
+						string srRecordName = System.Text.Encoding.Default.GetString (xObjectRecordBase.record_name);
 
-						ADD_ROW(self, System.Text.Encoding.Default.GetString(xObjectRecordBase.record_name), xAddRowStruct);
+						for (int k = 0; k < xObjectRecordBase.row_struct.Count; ++k)
+						{
+							NFMsg.RecordAddRowStruct xAddRowStruct = xObjectRecordBase.row_struct [k];
+
+							ADD_ROW (self, System.Text.Encoding.Default.GetString (xObjectRecordBase.record_name), xAddRowStruct);
+						}
 					}
 				}
 				////////////////property
@@ -497,6 +425,8 @@ namespace NFrame
 
 						xProperty = xPropertyManager.AddProperty(strPropertyName, varList);
 					}
+
+					//Debug.Log (self.ToString() + " " + strPropertyName + " : " + xDataBuff.xPropertyList.property_int_list[j].data);
 
 					xProperty.SetInt(xDataBuff.xPropertyList.property_int_list[j].data);
 				}
@@ -586,7 +516,7 @@ namespace NFrame
 				string strClassName = System.Text.Encoding.Default.GetString (xInfo.class_id);
 				string strConfigID = System.Text.Encoding.Default.GetString (xInfo.config_id);
 
-				Debug.Log ("new " + strClassName + " Object: " + xObjectID.ToString () + " " + xInfo.x + " " + xInfo.y + " " + xInfo.z);
+				Debug.Log ("create Object: " + strClassName + xObjectID.ToString () + " " + xInfo.x + " " + xInfo.y + " " + xInfo.z);
 
 				ObjectDataBuff xDataBuff;
 				if (mxObjectDataBuff.TryGetValue (xObjectID, out xDataBuff))
@@ -607,6 +537,11 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyInt)) as NFMsg.ObjectPropertyInt;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
+
 			NFIPropertyManager propertyManager = go.GetPropertyManager();
 
 			for(int i = 0; i < xData.property_list.Count; i++)
@@ -630,6 +565,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyFloat)) as NFMsg.ObjectPropertyFloat;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 
 			for(int i = 0; i < xData.property_list.Count; i++)
 			{
@@ -653,6 +592,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyString)) as NFMsg.ObjectPropertyString;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 
 			for(int i = 0; i < xData.property_list.Count; i++)
 			{
@@ -676,6 +619,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyObject)) as NFMsg.ObjectPropertyObject;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 
 			for(int i = 0; i < xData.property_list.Count; i++)
 			{
@@ -693,12 +640,70 @@ namespace NFrame
 			}
 		}
 
+		private void EGMI_ACK_PROPERTY_VECTOR2(NFMsg.MsgBase xMsg)
+		{
+			NFMsg.ObjectPropertyVector2 xData = new NFMsg.ObjectPropertyVector2();
+			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyVector2)) as NFMsg.ObjectPropertyVector2;
+
+			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
+
+			for(int i = 0; i < xData.property_list.Count; i++)
+			{
+				NFIPropertyManager propertyManager = go.GetPropertyManager();
+				NFIProperty property = propertyManager.GetProperty(System.Text.Encoding.Default.GetString(xData.property_list[i].property_name));
+				if (null == property)
+				{
+					NFDataList varList = new NFDataList();
+					varList.AddVector2(new NFVector2());
+
+					property = propertyManager.AddProperty(System.Text.Encoding.Default.GetString(xData.property_list[i].property_name), varList);
+				}
+
+				property.SetVector2(NFNetController.PBToNF(xData.property_list[i].data));
+			}
+		}
+
+		private void EGMI_ACK_PROPERTY_VECTOR3(NFMsg.MsgBase xMsg)
+		{
+			NFMsg.ObjectPropertyVector3 xData = new NFMsg.ObjectPropertyVector3();
+			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectPropertyVector3)) as NFMsg.ObjectPropertyVector3;
+
+			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
+
+			for(int i = 0; i < xData.property_list.Count; i++)
+			{
+				NFIPropertyManager propertyManager = go.GetPropertyManager();
+				NFIProperty property = propertyManager.GetProperty(System.Text.Encoding.Default.GetString(xData.property_list[i].property_name));
+				if (null == property)
+				{
+					NFDataList varList = new NFDataList();
+					varList.AddVector3(new NFVector3());
+
+					property = propertyManager.AddProperty(System.Text.Encoding.Default.GetString(xData.property_list[i].property_name), varList);
+				}
+
+				property.SetVector3(NFNetController.PBToNF(xData.property_list[i].data));
+			}
+		}
+
 		private void EGMI_ACK_RECORD_INT(NFMsg.MsgBase xMsg)
 		{
 			NFMsg.ObjectRecordInt xData = new NFMsg.ObjectRecordInt();
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordInt)) as NFMsg.ObjectRecordInt;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager recordManager = go.GetRecordManager();
 			NFIRecord record = recordManager.GetRecord(System.Text.Encoding.Default.GetString(xData.record_name));
 
@@ -714,6 +719,11 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordFloat)) as NFMsg.ObjectRecordFloat;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
+
 			NFIRecordManager recordManager = go.GetRecordManager();
 			NFIRecord record = recordManager.GetRecord(System.Text.Encoding.Default.GetString(xData.record_name));
 
@@ -744,6 +754,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordObject)) as NFMsg.ObjectRecordObject;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager recordManager = go.GetRecordManager();
 			NFIRecord record = recordManager.GetRecord(System.Text.Encoding.Default.GetString(xData.record_name));
 
@@ -759,6 +773,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordSwap)) as NFMsg.ObjectRecordSwap;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager recordManager = go.GetRecordManager();
 			NFIRecord record = recordManager.GetRecord(System.Text.Encoding.Default.GetString(xData.origin_record_name));
 
@@ -769,6 +787,10 @@ namespace NFrame
 		private void ADD_ROW(NFGUID self, string strRecordName, NFMsg.RecordAddRowStruct xAddStruct)
 		{
 			NFIObject go = NFCKernelModule.Instance.GetObject(self);
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager xRecordManager = go.GetRecordManager();
 
 			Hashtable recordVecDesc = new Hashtable();
@@ -821,6 +843,30 @@ namespace NFrame
 				}
 			}
 
+			for (int k = 0; k < xAddStruct.record_vector2_list.Count; ++k)
+			{
+				NFMsg.RecordVector2 addObjectStruct = (NFMsg.RecordVector2)xAddStruct.record_vector2_list[k];
+
+				if (addObjectStruct.col >= 0)
+				{
+					recordVecDesc[addObjectStruct.col] = NFDataList.VARIANT_TYPE.VTYPE_VECTOR2;
+					recordVecData[addObjectStruct.col] = NFNetController.PBToNF(addObjectStruct.data);
+
+				}
+			}
+
+			for (int k = 0; k < xAddStruct.record_vector3_list.Count; ++k)
+			{
+				NFMsg.RecordVector3 addObjectStruct = (NFMsg.RecordVector3)xAddStruct.record_vector3_list[k];
+
+				if (addObjectStruct.col >= 0)
+				{
+					recordVecDesc[addObjectStruct.col] = NFDataList.VARIANT_TYPE.VTYPE_VECTOR3;
+					recordVecData[addObjectStruct.col] = NFNetController.PBToNF(addObjectStruct.data);
+
+				}
+			}
+
 			NFDataList varListDesc = new NFDataList();
 			NFDataList varListData = new NFDataList();
 			for (int m = 0; m < recordVecDesc.Count; m++)
@@ -855,6 +901,18 @@ namespace NFrame
 							varListData.AddObject((NFGUID)recordVecData[m]);
 						}
 						break;
+						case NFDataList.VARIANT_TYPE.VTYPE_VECTOR2:
+							{
+								varListDesc.AddVector2(new NFVector2());
+								varListData.AddVector2((NFVector2)recordVecData[m]);
+							}
+							break;
+						case NFDataList.VARIANT_TYPE.VTYPE_VECTOR3:
+							{
+								varListDesc.AddVector3(new NFVector3());
+								varListData.AddVector3((NFVector3)recordVecData[m]);
+							}
+							break;
 						default:
 						break;
 
@@ -882,6 +940,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordAddRow)) as NFMsg.ObjectRecordAddRow;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager recordManager = go.GetRecordManager();
 
 			for (int i = 0; i < xData.row_data.Count; i++)
@@ -896,6 +958,10 @@ namespace NFrame
 			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ObjectRecordRemove)) as NFMsg.ObjectRecordRemove;
 
 			NFIObject go = NFCKernelModule.Instance.GetObject(NFNetController.PBToNF(xData.player_id));
+			if (go == null)
+			{
+				return;
+			}
 			NFIRecordManager recordManager = go.GetRecordManager();
 			NFIRecord record = recordManager.GetRecord(System.Text.Encoding.Default.GetString(xData.record_name));
 
@@ -918,8 +984,9 @@ namespace NFrame
 				return;
 			}
 
-			float fSpeed = NFCKernelModule.Instance.QueryPropertyInt(NFNetController.PBToNF(xData.mover), "MOVE_SPEED") / 10000.0f;
-			//NFRender.Instance.MoveTo(PBToNF(xData.mover), new Vector3(xData.target_pos[0].x, xData.target_pos[0].y, xData.target_pos[0].z), fSpeed, true);
+			float fSpeed = NFCKernelModule.Instance.QueryPropertyInt(NFNetController.PBToNF(xData.mover), "MOVE_SPEED") / 100.0f;
+
+			NFRender.Instance.MoveTo(NFNetController.PBToNF(xData.mover), new UnityEngine.Vector3(xData.target_pos[0].x, xData.target_pos[0].y, xData.target_pos[0].z), fSpeed, true);
 		}
 
 		private void EGMI_ACK_MOVE_IMMUNE(NFMsg.MsgBase xMsg)
@@ -932,41 +999,10 @@ namespace NFrame
 				return;
 			}
 
-			float fSpeed = NFCKernelModule.Instance.QueryPropertyInt(NFNetController.PBToNF(xData.mover), "MOVE_SPEED") / 10000.0f;
+			float fSpeed = NFCKernelModule.Instance.QueryPropertyInt(NFNetController.PBToNF(xData.mover), "MOVE_SPEED") / 100.0f;
 			fSpeed *= 1.5f;
 
 			//NFRender.Instance.MoveImmuneBySpeed(PBToNF(xData.mover), new Vector3(xData.target_pos[0].x, xData.target_pos[0].y, xData.target_pos[0].z), fSpeed, true);
-
-		}
-
-		private void EGMI_ACK_STATE_SYNC(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.ReqAckPlayerMove xData = new NFMsg.ReqAckPlayerMove();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckPlayerMove)) as NFMsg.ReqAckPlayerMove;
-
-			if (xData.target_pos.Count <= 0)
-			{
-				return;
-			}
-
-			NFGUID xGUID = NFNetController.PBToNF (xData.mover);
-			NFIObject xObject = NFCKernelModule.Instance.GetObject (xGUID);
-			if (xObject != null)
-			{
-				
-			}
-		}
-
-		private void EGMI_ACK_SKILL_OBJECTX(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.ReqAckUseSkill xData = new NFMsg.ReqAckUseSkill();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckUseSkill)) as NFMsg.ReqAckUseSkill;
-
-			NFGUID xUser = NFNetController.PBToNF (xData.user);
-			GameObject xGameObject = NFRender.Instance.GetObject (xUser);
-			if (xGameObject)
-			{
-			}
 
 		}
 
@@ -978,47 +1014,5 @@ namespace NFrame
 			mxNetController.aChatMsgList.Add(NFNetController.PBToNF(xData.chat_id).ToString() + ":" + System.Text.Encoding.Default.GetString(xData.chat_info));
 		}
 
-		private void EGEC_ACK_MINING_TITLE(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.AckMiningTitle xData = new NFMsg.AckMiningTitle();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.AckMiningTitle)) as NFMsg.AckMiningTitle;
-
-
-		}
-
-		private void EGMI_ACK_SEARCH_OPPNENT(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.AckSearchOppnent xData = new NFMsg.AckSearchOppnent();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.AckSearchOppnent)) as NFMsg.AckSearchOppnent;
-
-			NFStart.Instance.SetJoyEnable (false);
-			NFCWindowManager.Instance.HideAllWindows();
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_RETURN);
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_READY_FIGHTING);
-		}
-
-		private void EGMI_ACK_START_OPPNENT(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.ReqAckStartBattle xData = new NFMsg.ReqAckStartBattle();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.ReqAckStartBattle)) as NFMsg.ReqAckStartBattle;
-
-			NFCWindowManager.Instance.HideAllWindows();
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_RETURN);
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_FIGHT_TOP);
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_MONEY_TOP);
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_MAIN_SKILL);
-			NFStart.Instance.SetJoyEnable (true);
-		}
-
-		private void EGMI_ACK_END_OPPNENT(NFMsg.MsgBase xMsg)
-		{
-			NFMsg.AckEndBattle xData = new NFMsg.AckEndBattle();
-			xData = mxSerializer.Deserialize(new MemoryStream(xMsg.msg_data), null, typeof(NFMsg.AckEndBattle)) as NFMsg.AckEndBattle;
-
-			NFStart.Instance.SetJoyEnable (false);
-			NFCWindowManager.Instance.HideAllWindows();
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_RETURN);
-			NFCWindowManager.Instance.ShowWindows(NFCWindows.UI_WIN_STATE.UI_WIN_FIGHTING_RESULT);
-		}
     }
 }

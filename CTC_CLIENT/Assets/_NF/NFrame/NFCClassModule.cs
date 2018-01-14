@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using UnityEngine;
 
 namespace NFrame
 {
@@ -33,40 +34,12 @@ namespace NFrame
         {
             ClearLogicClass();
             
-            XmlDocument xmldoc = new XmlDocument();
 
-            if (System.IO.File.Exists(mstrPath + "/NFDataCfg/Struct/LogicClass.xml"))
-            {
-                mbEncrypt = false;
-                
-            }
-            else
-            {
-                mbEncrypt = true;
-            }
+            string strLogicPath = mstrPath + "NFDataCfg/Struct/LogicClass";
+			TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-            if (!mbEncrypt)
-            {
-                string strLogicPath = mstrPath + "/NFDataCfg/Struct/LogicClass.xml";
-
-                xmldoc.Load(strLogicPath);
-            }
-            else
-            {
-                //¼ÓÃÜÁË
-                string strLogicPath = mstrPath + "/NFDataCfg/Struct/LogicClass.NF";
-
-                ///////////////////////////////////////////////////////////////////////////////////////
-                StreamReader cepherReader = new StreamReader(strLogicPath); ;
-                string strContent = cepherReader.ReadToEnd();
-                cepherReader.Close();
-
-                byte[] data = Convert.FromBase64String(strContent);
-                string res = System.Text.ASCIIEncoding.Default.GetString(data);
-
-                xmldoc.LoadXml(res);
-            }
-
+			XmlDocument xmldoc = new XmlDocument ();
+			xmldoc.LoadXml ( textAsset.text );
             XmlNode root = xmldoc.SelectSingleNode("XML");
 
             LoadLogicClass(root);
@@ -93,7 +66,7 @@ namespace NFrame
             {
                 NFIClass xElement = new NFCClass();
                 xElement.SetName(strName);
-                xElement.SetEncrypt(mbEncrypt);
+                xElement.SetEncrypt(false);
 
                 mhtObject.Add(strName, xElement);
 
@@ -129,7 +102,7 @@ namespace NFrame
                 xLogicClass.SetName(strID.Value);
                 xLogicClass.SetPath(strPath.Value);
                 xLogicClass.SetInstance(strInstancePath.Value);
-                xLogicClass.SetEncrypt(mbEncrypt);
+                xLogicClass.SetEncrypt(false);
 
                 XmlNodeList xNodeSubClassList = xNodeClass.SelectNodes("Class");
                 if (xNodeSubClassList.Count > 0)
@@ -178,26 +151,14 @@ namespace NFrame
             {
                 string strLogicPath = mstrPath + xLogicClass.GetPath();
 
-                XmlDocument xmldoc = new XmlDocument();
-                if (mbEncrypt)
-                {
-                    ///////////////////////////////////////////////////////////////////////////////////////
-                    StreamReader cepherReader = new StreamReader(strLogicPath); ;
-                    string strContent = cepherReader.ReadToEnd();
-                    cepherReader.Close();
+				strLogicPath = strLogicPath.Replace (".xml", "");
 
-                    byte[] data = Convert.FromBase64String(strContent);
-                    string res = System.Text.ASCIIEncoding.Default.GetString(data);
+				TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-                    xmldoc.LoadXml(res);
-                    /////////////////////////////////////////////////////////////////
-                }
-                else
-                {
-                    xmldoc.Load(strLogicPath);
-                }
+				XmlDocument xmldoc = new XmlDocument ();
+				xmldoc.LoadXml ( textAsset.text );
+				XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
-                XmlNode xRoot = xmldoc.SelectSingleNode("XML");
                 XmlNode xNodePropertys = xRoot.SelectSingleNode("Propertys");
                 XmlNodeList xNodeList = xNodePropertys.SelectNodes("Property");
                 for (int i = 0; i < xNodeList.Count; ++i)
@@ -255,29 +216,15 @@ namespace NFrame
             NFIClass xLogicClass = GetElement(strName);
             if (null != xLogicClass)
             {
-                string strLogicPath = mstrPath + xLogicClass.GetPath();
+				string strLogicPath = mstrPath + xLogicClass.GetPath();
+				strLogicPath = strLogicPath.Replace (".xml", "");
 
-                XmlDocument xmldoc = new XmlDocument();
+				TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-                if(mbEncrypt)
-                {
-                    ///////////////////////////////////////////////////////////////////////////////////////
-                    StreamReader cepherReader = new StreamReader(strLogicPath); ;
-                    string strContent = cepherReader.ReadToEnd();
-                    cepherReader.Close();
+				XmlDocument xmldoc = new XmlDocument ();
+				xmldoc.LoadXml ( textAsset.text );
+				XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
-                    byte[] data = Convert.FromBase64String(strContent);
-                    string res = System.Text.ASCIIEncoding.Default.GetString(data);
-
-                    xmldoc.LoadXml(res);
-                    /////////////////////////////////////////////////////////////////
-                }
-                else
-                {
-                    xmldoc.Load(strLogicPath);
-                }
-
-                XmlNode xRoot = xmldoc.SelectSingleNode("XML");
                 XmlNode xNodePropertys = xRoot.SelectSingleNode("Records");
                 if (null != xNodePropertys)
                 {
@@ -370,6 +317,5 @@ namespace NFrame
         /////////////////////////////////////////
         private Dictionary<string, NFIClass> mhtObject = new Dictionary<string, NFIClass>();
         private string mstrPath = "";
-        private bool mbEncrypt;
     }
 }

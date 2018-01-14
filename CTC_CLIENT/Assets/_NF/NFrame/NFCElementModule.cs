@@ -11,6 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Collections;
 using System.IO;
+using UnityEngine;
 
 namespace NFrame
 {
@@ -139,28 +140,13 @@ namespace NFrame
             string strLogicPath = mstrRootPath;
             strLogicPath += xLogicClass.GetInstance();
 
-            XmlDocument xmldoc = new XmlDocument();
+			strLogicPath = strLogicPath.Replace (".xml", "");
 
-            if (xLogicClass.GetEncrypt())
-            {
-                ///////////////////////////////////////////////////////////////////////////////////////
-                StreamReader cepherReader = new StreamReader(strLogicPath); ;
-                string strContent = cepherReader.ReadToEnd();
-                cepherReader.Close();
+			TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-                byte[] data = Convert.FromBase64String(strContent);
-
-                string res = System.Text.ASCIIEncoding.Default.GetString(data);
-
-                xmldoc.LoadXml(res);
-                /////////////////////////////////////////////////////////////////
-            }
-            else
-            {
-                xmldoc.Load(strLogicPath);
-            }
-
-            XmlNode xRoot = xmldoc.SelectSingleNode("XML");
+			XmlDocument xmldoc = new XmlDocument ();
+			xmldoc.LoadXml ( textAsset.text );
+			XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
             XmlNodeList xNodeList = xRoot.SelectNodes("Object");
             for (int i = 0; i < xNodeList.Count; ++i)

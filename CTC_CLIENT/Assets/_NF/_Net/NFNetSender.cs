@@ -532,6 +532,7 @@ namespace NFrame
 		{
 			//only use in the first time when player enter game world
 			NFMsg.ReqAckEnterGameSuccess xData = new NFMsg.ReqAckEnterGameSuccess();
+			xData.arg = 1;
 
 			mxBody.SetLength(0);
 			mxSerializer.Serialize(mxBody, xData);
@@ -551,22 +552,22 @@ namespace NFrame
 	    }
 
 	    //WSAD移动
-	    public void RequireMove(NFrame.NFGUID objectID, int nType, float fPosX, float fPosY, float fTarX, float fTarY)
+		public void RequireMove(NFrame.NFGUID objectID, int nType, UnityEngine.Vector3 vPos, UnityEngine.Vector3 vTar)
 	    {
 	        NFMsg.ReqAckPlayerMove xData = new NFMsg.ReqAckPlayerMove();
 			xData.mover = NFNetController.NFToPB(objectID);
 			xData.moveType = nType;
 
 			NFMsg.Vector3 xNowPos = new NFMsg.Vector3();
-	        xNowPos.x = fPosX;
-	        xNowPos.y = 0.0f;
-	        xNowPos.z = fPosY;
+			xNowPos.x = vPos.x;
+			xNowPos.y = vPos.y;
+			xNowPos.z = vPos.z;
 	        xData.source_pos.Add(xNowPos);
 
 			NFMsg.Vector3 xTargetPos = new NFMsg.Vector3();
-	        xTargetPos.x = fTarX;
-	        xTargetPos.y = 0.0f;
-	        xTargetPos.z = fTarY;
+			xTargetPos.x = vTar.x;
+			xTargetPos.y = vTar.y;
+			xTargetPos.z = vTar.z;
 	        xData.target_pos.Add(xTargetPos);
 
 			mxBody.SetLength(0);
@@ -576,14 +577,15 @@ namespace NFrame
 
 	        //为了表现，客户端先走，后续同步
 	    }
-		public void RequireMoveImmune(NFrame.NFGUID objectID, float fX, float fZ)
+		public void RequireMoveImmune(NFrame.NFGUID objectID, UnityEngine.Vector3 vPos)
 		{
 			NFMsg.ReqAckPlayerMove xData = new NFMsg.ReqAckPlayerMove();
 			xData.mover = NFNetController.NFToPB(objectID);
 			xData.moveType = 0;
 			NFMsg.Vector3 xTargetPos = new NFMsg.Vector3();
-			xTargetPos.x = fX;
-			xTargetPos.z = fZ;
+			xTargetPos.x = vPos.x;
+			xTargetPos.y = vPos.y;
+			xTargetPos.z = vPos.z;
 			xData.target_pos.Add(xTargetPos);
 
 			mxBody.SetLength(0);
@@ -604,21 +606,24 @@ namespace NFrame
 		}
 
 		//有可能是他副本的NPC移动,因此增加64对象ID
-		public void RequireUseSkill(NFrame.NFGUID objectID, string strKillID, Int32 index, List<NFrame.NFGUID> nTargetID)
+		public void RequireUseSkill(NFrame.NFGUID objectID, string strKillID, Int32 index, List<NFrame.NFGUID> nTargetIDList)
 		{
 			NFMsg.ReqAckUseSkill xData = new NFMsg.ReqAckUseSkill();
 			xData.user = NFNetController.NFToPB(objectID);
 			xData.skill_id = System.Text.Encoding.Default.GetBytes(strKillID);
 			xData.use_index = index;
 
-			foreach (NFGUID id in nTargetID)
+			if (nTargetIDList != null)
 			{
-				NFMsg.EffectData xEffData = new NFMsg.EffectData();
-				xEffData.effect_ident = (NFNetController.NFToPB(id));
-				xEffData.effect_value = 0;
-				xEffData.effect_rlt = 0;
+				foreach (NFGUID id in nTargetIDList)
+				{
+					NFMsg.EffectData xEffData = new NFMsg.EffectData();
+					xEffData.effect_ident = (NFNetController.NFToPB(id));
+					xEffData.effect_value = 0;
+					xEffData.effect_rlt = 0;
 
-				xData.effect_data.Add(xEffData);
+					xData.effect_data.Add(xEffData);
+				}
 			}
 
 			mxBody.SetLength(0);
@@ -627,15 +632,16 @@ namespace NFrame
 
 			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_SKILL_OBJECTX, mxBody);
 		}
-		public void RequireUseItem(NFrame.NFGUID objectID, string strItemID, NFrame.NFGUID nTargetID)
+		public void RequireUseItem(NFrame.NFGUID objectID, string strItemID, NFrame.NFGUID nTargetID, UnityEngine.Vector3 pos)
 		{
 			NFMsg.ReqAckUseItem xData = new NFMsg.ReqAckUseItem();
 			xData.user = NFNetController.NFToPB(objectID);
 			xData.item_guid = new NFMsg.Ident ();
 			xData.item = new ItemStruct ();
-			xData.item.item_id = strItemID;
+			xData.item.item_id = UnicodeEncoding.Default.GetBytes(strItemID);
 			xData.item.item_count = 1;
 			xData.targetid = (NFNetController.NFToPB(nTargetID));
+			xData.position = (NFNetController.NFToPB(new NFVector3(pos.x, pos.y, pos.z)));
 
 			mxBody.SetLength(0);
 			mxSerializer.Serialize(mxBody, xData);
@@ -820,6 +826,21 @@ namespace NFrame
 			mxSerializer.Serialize(mxBody, xData);
 
 			SendMsg(objectID, NFMsg.EGameMsgID.EGEC_REQ_SWITCH_FIGHT_HERO, mxBody);
+		}
+
+
+		//switch fight hero
+		public void RequireAddGamble(NFrame.NFGUID objectID,  string gambleProperty, int number)
+		{
+			NFMsg.ReqAddGambleValue xData = new NFMsg.ReqAddGambleValue ();
+
+			xData.property = UnicodeEncoding.Default.GetBytes(gambleProperty);
+			xData.number = number;
+
+			mxBody.SetLength(0);
+			mxSerializer.Serialize(mxBody, xData);
+
+			SendMsg(objectID, NFMsg.EGameMsgID.EGMI_REQ_ADJUST_GAMBLE, mxBody);
 		}
 	}
 }

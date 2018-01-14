@@ -83,6 +83,8 @@ namespace NFrame
                 return mxData.IntVal();
             }
 
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
+
             return NFDataList.NULL_INT;
         }
 
@@ -92,6 +94,8 @@ namespace NFrame
             {
                 return (double)mxData.FloatVal();
             }
+
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
 
             return NFDataList.NULL_DOUBLE;
         }
@@ -103,6 +107,8 @@ namespace NFrame
                 return mxData.StringVal();
             }
 
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
+
             return NFDataList.NULL_STRING;
         }
 
@@ -112,6 +118,8 @@ namespace NFrame
             {
                 return (NFGUID)mxData.ObjectVal();
             }
+
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
 
             return NFDataList.NULL_OBJECT;
         }
@@ -123,6 +131,8 @@ namespace NFrame
                 return (NFVector2)mxData.Vector2Val();
             }
 
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
+
             return NFDataList.NULL_VECTOR2;
         }
 
@@ -133,11 +143,20 @@ namespace NFrame
                 return (NFVector3)mxData.Vector3Val();
             }
 
+			UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString());
+
             return NFDataList.NULL_VECTOR3;
         }
 
         public override bool SetInt(Int64 value)
 		{
+			if (NFDataList.VARIANT_TYPE.VTYPE_INT != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_INT.ToString());
+
+				return false;
+			}
+
             if (mxData.IntVal() != value)
             {
                 NFDataList.TData oldValue = new NFDataList.TData(mxData);
@@ -158,6 +177,13 @@ namespace NFrame
 
 		public override bool SetFloat(double value)
 		{
+			if (NFDataList.VARIANT_TYPE.VTYPE_FLOAT != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_FLOAT.ToString());
+
+				return false;
+			}
+
             if (mxData.FloatVal() - value > NFDataList.EPS_DOUBLE
                 || mxData.FloatVal() - value < -NFDataList.EPS_DOUBLE)
             {
@@ -178,6 +204,12 @@ namespace NFrame
 
 		public override bool SetString(string value)
 		{
+			if (NFDataList.VARIANT_TYPE.VTYPE_STRING != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_STRING.ToString());
+
+				return false;
+			}
             if (mxData.StringVal() != value)
             {
                 NFDataList.TData oldValue = new NFDataList.TData(mxData);
@@ -197,6 +229,13 @@ namespace NFrame
 
 		public override bool SetObject(NFGUID value)
 		{
+			if (NFDataList.VARIANT_TYPE.VTYPE_OBJECT != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_OBJECT.ToString());
+
+				return false;
+			}
+
             if (mxData.ObjectVal() != value)
             {
                 NFDataList.TData oldValue = new NFDataList.TData(mxData);
@@ -216,6 +255,13 @@ namespace NFrame
 
         public override bool SetVector2(NFVector2 value)
         {
+			if (NFDataList.VARIANT_TYPE.VTYPE_VECTOR2 != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_VECTOR2.ToString());
+
+				return false;
+			}
+
             if (mxData.Vector2Val() != value)
             {
                 NFDataList.TData oldValue = new NFDataList.TData(mxData);
@@ -235,6 +281,13 @@ namespace NFrame
 
         public override bool SetVector3(NFVector3 value)
         {
+			if (NFDataList.VARIANT_TYPE.VTYPE_VECTOR3 != mxData.GetType ())
+			{
+				UnityEngine.Debug.LogError (this.msPropertyName + " is " + mxData.GetType().ToString() + " but you set type " + NFDataList.VARIANT_TYPE.VTYPE_VECTOR3.ToString());
+
+				return false;
+			}
+
             if (mxData.Vector3Val() != value)
             {
                 NFDataList.TData oldValue = new NFDataList.TData(mxData);

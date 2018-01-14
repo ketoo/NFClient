@@ -20,8 +20,8 @@ namespace NFrame
 
 		public override void RegisterCallback(NFGUID self, int nEventID, NFIEvent.EventHandler handler, NFDataList valueList)
 		{
-            Dictionary<int, NFIEvent> xData = mhtEvent[self];
-			if (!mhtEvent.ContainsKey(self) || null == xData)
+            Dictionary<int, NFIEvent> xData;
+			if (!mhtEvent.ContainsKey(self))
 			{
                 xData = new Dictionary<int, NFIEvent>();
                 xData.Add(nEventID, new NFCEvent(self, nEventID, valueList));
@@ -30,6 +30,7 @@ namespace NFrame
                 return;
 			}
 
+			xData = mhtEvent[self];
             if (!xData.ContainsKey(nEventID))
             {
                 xData.Add(nEventID, new NFCEvent(self, nEventID, valueList));
@@ -42,15 +43,18 @@ namespace NFrame
 
         public override void DoEvent(NFGUID self, int nEventID, NFDataList valueList)
         {
-            Dictionary<int, NFIEvent> xData = mhtEvent[self];
-            if (null != xData)
-            {
-                if (xData.ContainsKey(nEventID))
-                {
-                    NFIEvent identEvent = (NFIEvent)xData[nEventID];
-                    identEvent.DoEvent(valueList);
-                }
-            }
+			Dictionary<int, NFIEvent> xData;
+			if (mhtEvent.TryGetValue (self, out xData))
+			{
+				if (null != xData)
+				{
+					if (xData.ContainsKey (nEventID))
+					{
+						NFIEvent identEvent = (NFIEvent)xData [nEventID];
+						identEvent.DoEvent (valueList);
+					}
+				}
+			}
         }
 
         Dictionary<NFGUID, Dictionary<int, NFIEvent>> mhtEvent;

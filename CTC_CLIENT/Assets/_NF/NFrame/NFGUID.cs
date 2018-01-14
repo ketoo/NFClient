@@ -33,7 +33,6 @@ namespace NFrame
             nHead64 = nHead;
             nData64 = nData;
         }
-
 		public static bool operator == (NFGUID ident, NFGUID other)
 		{
             if (((object)ident == null) && ((object)other == null))
@@ -59,6 +58,18 @@ namespace NFrame
             return this == (NFGUID)other;
         }
 
+		public void Clear()
+		{
+			nData64 = 0;
+			nHead64 = 0;
+		}
+
+		public void Reset()
+		{
+			nData64 = 0;
+			nHead64 = 0;
+		}
+
         public bool IsNull()
         {
             return 0 == nData64 && 0 == nHead64;
@@ -69,11 +80,8 @@ namespace NFrame
             return nHead64.ToString() + "-" + nData64.ToString();
         }
 
-        public bool Parse(string strData, out NFGUID id)
+        public bool Parse(string strData)
         {
-            NFGUID xId = new NFGUID();
-            id = xId;
-
             string[] strList = strData.Split('-');
             if (strList.Count() != 2)
             {
@@ -92,8 +100,8 @@ namespace NFrame
                 return false;
             }
 
-            id.nHead64 = nHead;
-            id.nData64 = nData;
+            this.nHead64 = nHead;
+			this.nData64 = nData;
 
             return true;
         }

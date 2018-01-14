@@ -55,6 +55,11 @@ namespace NFrame
 
 			public bool Set(Int64 value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_INT;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_INT)
 				{
 					mData = value;
@@ -66,6 +71,11 @@ namespace NFrame
 
 			public bool Set(double value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_FLOAT;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_FLOAT)
 				{
 					mData = value;
@@ -77,6 +87,11 @@ namespace NFrame
 
 			public bool Set(string value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_STRING;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_STRING)
 				{
 					mData = value;
@@ -88,6 +103,11 @@ namespace NFrame
 
 			public bool Set(NFGUID value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_OBJECT;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_OBJECT)
 				{
 					mData = value;
@@ -99,6 +119,11 @@ namespace NFrame
 
 			public bool Set(NFVector2 value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_VECTOR2;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_VECTOR2)
 				{
 					mData = value;
@@ -110,6 +135,11 @@ namespace NFrame
 
 			public bool Set(NFVector3 value)
 			{
+				if (nType == VARIANT_TYPE.VTYPE_UNKNOWN)
+				{
+					nType = VARIANT_TYPE.VTYPE_VECTOR3;
+				}
+
 				if (nType == VARIANT_TYPE.VTYPE_VECTOR3)
 				{
 					mData = value;

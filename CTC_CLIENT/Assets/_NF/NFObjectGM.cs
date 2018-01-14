@@ -142,7 +142,7 @@ public class NFObjectGM
                     {
                         string strNowDataObject = xNowArgList.StringVal(i);
                         NFGUID xIdent = new NFGUID();
-                        if (!xIdent.Parse(strNowDataObject, out xIdent))
+                        if (!xIdent.Parse(strNowDataObject))
                         {
                             Debug.LogWarning("Arg:" + i + " Can not parse to Object:" + strNowDataObject);
                             return false;
