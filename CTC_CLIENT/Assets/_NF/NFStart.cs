@@ -206,4 +206,9 @@ public class NFStart : MonoBehaviour
         }
 
     }
+
+    private void OnApplicationQuit()
+    {
+        NFNetController.Instance.Destroy ();
+    }
 }
