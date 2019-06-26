@@ -30,22 +30,46 @@ namespace NFSDK
 
         public class TData
         {
+            private TData()
+            {
+                mData = new Object();
+                nType = VARIANT_TYPE.VTYPE_UNKNOWN;
+            }
+
             public TData(TData x)
             {
                 nType = x.nType;
                 mData = x.mData;
             }
 
-            public TData()
-            {
-                mData = new Object();
-                nType = VARIANT_TYPE.VTYPE_UNKNOWN;
-            }
 
             public TData(VARIANT_TYPE eType)
             {
                 mData = new Object();
                 nType = eType;
+                switch (eType)
+                {
+                    case VARIANT_TYPE.VTYPE_INT:
+                        mData = (Int64)0;
+                        break;
+                    case VARIANT_TYPE.VTYPE_FLOAT:
+                        mData = (double)0;
+                        break;
+                    case VARIANT_TYPE.VTYPE_OBJECT:
+                        mData = new NFGUID();
+                        break;
+                    case VARIANT_TYPE.VTYPE_STRING:
+                        mData = "";
+                        break;
+                    case VARIANT_TYPE.VTYPE_VECTOR2:
+                        mData = new NFVector2();
+                        break;
+                    case VARIANT_TYPE.VTYPE_VECTOR3:
+                        mData = new NFVector3();
+                        break;
+                    default:
+                        break;
+                }
             }
 
             public VARIANT_TYPE GetType()
@@ -215,7 +239,7 @@ namespace NFSDK
                 return NFDataList.NULL_VECTOR3;
             }
 
-            public string ToString()
+            public override string ToString()
             {
                 switch (nType)
                 {
@@ -255,7 +279,7 @@ namespace NFSDK
         public static readonly NFVector2 NULL_VECTOR2 = new NFVector2();
         public static readonly NFVector3 NULL_VECTOR3 = new NFVector3();
         public static readonly double EPS_DOUBLE = 0.0001;
-        public static readonly TData NULL_TDATA = new TData();
+        public static readonly TData NULL_TDATA = new TData(NFDataList.VARIANT_TYPE.VTYPE_UNKNOWN);
 
         public NFDataList(string str, char c)
         {

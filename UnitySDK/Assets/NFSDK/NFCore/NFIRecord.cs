@@ -13,7 +13,7 @@ namespace NFSDK
     public abstract class NFIRecord
     {
 
-        public enum eRecordOptype
+        public enum ERecordOptype
         {
             Add = 0,
             Del,
@@ -26,7 +26,7 @@ namespace NFSDK
 
         };
 
-        public delegate void RecordEventHandler(NFGUID self, string strRecordName, NFIRecord.eRecordOptype eType, int nRow, int nCol, NFDataList.TData oldVar, NFDataList.TData newVar);
+        public delegate void RecordEventHandler(NFGUID self, string strRecordName, NFIRecord.ERecordOptype eType, int nRow, int nCol, NFDataList.TData oldVar, NFDataList.TData newVar);
 
         public abstract void SetUpload(bool upload);
         public abstract bool GetUpload();
@@ -66,6 +66,13 @@ namespace NFSDK
 
         //public abstract int FindRow( int nRow );
         public abstract int FindColValue(int nCol, NFDataList var, ref NFDataList varResult);
+
+        public abstract int FindRecordRow(int nCol, int value);
+        public abstract int FindRecordRow(int nCol, double value);
+        public abstract int FindRecordRow(int nCol, string value);
+        public abstract int FindRecordRow(int nCol, NFGUID value);
+        public abstract int FindRecordRow(int nCol, NFVector2 value);
+        public abstract int FindRecordRow(int nCol, NFVector3 value);
 
         public abstract int FindInt(int nCol, Int64 value, ref NFDataList varResult);
         public abstract int FindFloat(int nCol, double value, ref NFDataList varResult);

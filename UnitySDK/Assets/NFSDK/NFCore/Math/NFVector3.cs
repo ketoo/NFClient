@@ -90,7 +90,7 @@ namespace NFSDK
             return true;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return x + "," + y + "," + z;
         }

@@ -11,6 +11,9 @@ namespace NFSDK
         public Int64 nHead64;
         public Int64 nData64;
 
+        public readonly static NFGUID Zero = new NFGUID();
+       
+
         public NFGUID()
         {
             nHead64 = 0;

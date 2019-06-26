@@ -34,7 +34,7 @@ namespace NFSDK
 
         /////////////////////////////////////////////////////////////////
 
-        public abstract bool FindProperty(string strPropertyName);
+		public abstract NFIProperty FindProperty(string strPropertyName);
 
         public abstract bool SetPropertyInt(string strPropertyName, Int64 nValue);
         public abstract bool SetPropertyFloat(string strPropertyName, double fValue);
@@ -50,7 +50,7 @@ namespace NFSDK
         public abstract NFVector2 QueryPropertyVector2(string strPropertyName);
         public abstract NFVector3 QueryPropertyVector3(string strPropertyName);
 
-        public abstract bool FindRecord(string strRecordName);
+		public abstract NFIRecord FindRecord(string strRecordName);
 
         public abstract bool SetRecordInt(string strRecordName, int nRow, int nCol, Int64 nValue);
         public abstract bool SetRecordFloat(string strRecordName, int nRow, int nCol, double fValue);

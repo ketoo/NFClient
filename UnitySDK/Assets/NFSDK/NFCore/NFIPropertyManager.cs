@@ -12,10 +12,9 @@ namespace NFSDK
 {
     public abstract class NFIPropertyManager
     {
-        public abstract NFIProperty AddProperty(string strPropertyName, NFDataList varData);
         public abstract NFIProperty AddProperty(string strPropertyName, NFDataList.TData varData);
 
-        public abstract bool SetProperty(string strPropertyName, NFDataList varData);
+        public abstract bool SetProperty(string strPropertyName, NFDataList.TData varData);
 
         public abstract NFIProperty GetProperty(string strPropertyName);
 		

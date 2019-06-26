@@ -28,7 +28,6 @@ namespace NFSDK
                 if (module != null)
                 {
                     module.Init();
-                    Debug.LogFormat("NFIPlugin module Init");
                 }
             }
         }
