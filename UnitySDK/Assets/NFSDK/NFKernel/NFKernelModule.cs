@@ -14,9 +14,9 @@ using System.Collections.Generic;
 
 namespace NFSDK
 {
-	public class NFCKernelModule : NFIKernelModule
+	public class NFKernelModule : NFIKernelModule
     {
-        public NFCKernelModule(NFIPluginManager pluginManager)
+        public NFKernelModule(NFIPluginManager pluginManager)
         {
             mPluginManager = pluginManager;
             mhtObject = new Dictionary<NFGUID, NFIObject>();
@@ -29,8 +29,10 @@ namespace NFSDK
         private NFIElementModule mxElementModule;
         private NFIClassModule mxLogicClassModule;
 
-       
-		~NFCKernelModule()
+        private Random mRandom = new Random();
+
+
+        ~NFKernelModule()
 		{
 			mhtObject = null;
         }
@@ -47,6 +49,7 @@ namespace NFSDK
 
         public override void AfterInit()
         {
+            CreateObject(new NFGUID(0, 0), 0, 0, NFrame.Group.ThisName, "", new NFDataList());
         }
 
         public override void BeforeShut()
@@ -59,6 +62,24 @@ namespace NFSDK
 
         public override void Execute()
         {
+        }
+
+        public override void RegisterGroupPropertyCallback(string strPropertyName, NFIProperty.PropertyEventHandler handler)
+        {
+            NFIObject xGameObject = GetObject(new NFGUID(0, 0));
+            if (null != xGameObject)
+            {
+                xGameObject.GetPropertyManager().RegisterCallback(strPropertyName, handler);
+            }
+        }
+
+        public override void RegisterGroupRecordCallback(string strRecordName, NFIRecord.RecordEventHandler handler)
+        {
+            NFIObject xGameObject = GetObject(new NFGUID(0, 0));
+            if (null != xGameObject)
+            {
+                xGameObject.GetRecordManager().RegisterCallback(strRecordName, handler);
+            }
         }
 
 		public override void RegisterPropertyCallback(NFGUID self, string strPropertyName, NFIProperty.PropertyEventHandler handler)
@@ -118,15 +139,15 @@ namespace NFSDK
 		{
 			if (!mhtObject.ContainsKey(self))
 			{
-				NFIObject xNewObject = new NFCObject(self, nContainerID, nGroupID, strClassName, strConfigIndex);
+				NFIObject xNewObject = new NFObject(self, nContainerID, nGroupID, strClassName, strConfigIndex);
 				mhtObject.Add(self, xNewObject);
 
-                NFDataList varConfigID = new NFDataList();
-                varConfigID.AddString(strConfigIndex);
+                NFDataList.TData varConfigID = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
+                varConfigID.Set(strConfigIndex);
                 xNewObject.GetPropertyManager().AddProperty("ConfigID", varConfigID);
 
-                NFDataList varConfigClass = new NFDataList();
-                varConfigClass.AddString(strClassName);
+                NFDataList.TData varConfigClass = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
+                varConfigClass.Set(strClassName);
                 xNewObject.GetPropertyManager().AddProperty("ClassName", varConfigClass);
 
                 if (arg.Count() % 2 == 0)
@@ -139,44 +160,44 @@ namespace NFSDK
                         {
                             case NFDataList.VARIANT_TYPE.VTYPE_INT:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddInt(arg.IntVal(i+1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_INT);
+                                    var.Set(arg.IntVal(i+1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             case NFDataList.VARIANT_TYPE.VTYPE_FLOAT:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddFloat(arg.FloatVal(i + 1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_FLOAT);
+                                    var.Set(arg.FloatVal(i + 1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             case NFDataList.VARIANT_TYPE.VTYPE_STRING:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddString(arg.StringVal(i + 1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
+                                    var.Set(arg.StringVal(i + 1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             case NFDataList.VARIANT_TYPE.VTYPE_OBJECT:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddObject(arg.ObjectVal(i + 1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_OBJECT);
+                                    var.Set(arg.ObjectVal(i + 1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             case NFDataList.VARIANT_TYPE.VTYPE_VECTOR2:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddVector2(arg.Vector2Val(i + 1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR2);
+                                    var.Set(arg.Vector2Val(i + 1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             case NFDataList.VARIANT_TYPE.VTYPE_VECTOR3:
                                 {
-                                    NFDataList xDataList = new NFDataList();
-                                    xDataList.AddVector3(arg.Vector3Val(i + 1));
-                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, xDataList);
+                                    NFDataList.TData var = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR3);
+                                    var.Set(arg.Vector3Val(i + 1));
+                                    xNewObject.GetPropertyManager().AddProperty(strPropertyName, var);
                                 }
                                 break;
                             default:
@@ -188,17 +209,21 @@ namespace NFSDK
                 InitProperty(self, strClassName);
                 InitRecord(self, strClassName);
 
-				ClassHandleDel xHandleDel = (ClassHandleDel)mhtClassHandleDel[strClassName];
-                if (null != xHandleDel && null != xHandleDel.GetHandler())
+                if (mhtClassHandleDel.ContainsKey(strClassName))
                 {
-					NFIObject.ClassEventHandler xHandlerList = xHandleDel.GetHandler();
-                    xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_CREATE, strClassName, strConfigIndex);
-					xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_LOADDATA, strClassName, strConfigIndex);
-					xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_CREATE_FINISH, strClassName, strConfigIndex);
-				}
+                    ClassHandleDel xHandleDel = (ClassHandleDel)mhtClassHandleDel[strClassName];
+                    if (null != xHandleDel && null != xHandleDel.GetHandler())
+                    {
+                        NFIObject.ClassEventHandler xHandlerList = xHandleDel.GetHandler();
+                        xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_CREATE, strClassName, strConfigIndex);
+                        xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_LOADDATA, strClassName, strConfigIndex);
+                        xHandlerList(self, nContainerID, nGroupID, NFIObject.CLASS_EVENT_TYPE.OBJECT_CREATE_FINISH, strClassName, strConfigIndex);
+                    }
+
+                }
 
                 //NFCLog.Instance.Log(NFCLog.LOG_LEVEL.DEBUG, "Create object: " + self.ToString() + " ClassName: " + strClassName + " SceneID: " + nContainerID + " GroupID: " + nGroupID);
-				return xNewObject;
+                return xNewObject;
 			}
 
 			return null;
@@ -212,24 +237,28 @@ namespace NFSDK
 				NFIObject xGameObject = (NFIObject)mhtObject[self];
 
 				string strClassName = xGameObject.ClassName();
-
-				ClassHandleDel xHandleDel = (ClassHandleDel)mhtClassHandleDel[strClassName];
-                if (null != xHandleDel && null != xHandleDel.GetHandler())
+                if (mhtClassHandleDel.ContainsKey(strClassName))
                 {
-					NFIObject.ClassEventHandler xHandlerList = xHandleDel.GetHandler();
-                    xHandlerList(self, xGameObject.ContainerID(), xGameObject.GroupID(), NFIObject.CLASS_EVENT_TYPE.OBJECT_DESTROY, xGameObject.ClassName(), xGameObject.ConfigIndex());
+                    ClassHandleDel xHandleDel = (ClassHandleDel)mhtClassHandleDel[strClassName];
+                    if (null != xHandleDel && null != xHandleDel.GetHandler())
+                    {
+                        NFIObject.ClassEventHandler xHandlerList = xHandleDel.GetHandler();
+                        xHandlerList(self, xGameObject.ContainerID(), xGameObject.GroupID(), NFIObject.CLASS_EVENT_TYPE.OBJECT_DESTROY, xGameObject.ClassName(), xGameObject.ConfigIndex());
+                    }
+
+                    mhtObject.Remove(self);
                 }
-				mhtObject.Remove(self);
+
 
                 //NFCLog.Instance.Log(NFCLog.LOG_LEVEL.DEBUG, "Destroy object: " + self.ToString() + " ClassName: " + strClassName + " SceneID: " + xGameObject.ContainerID() + " GroupID: " + xGameObject.GroupID());
 
-				return true;
+                return true;
 			}
 
 			return false;
 		}
 
-		public override bool FindProperty(NFGUID self, string strPropertyName)
+		public override NFIProperty FindProperty(NFGUID self, string strPropertyName)
 		{
 			if (mhtObject.ContainsKey(self))
 			{
@@ -237,7 +266,7 @@ namespace NFSDK
 				return xGameObject.FindProperty(strPropertyName);
 			}
 
-			return false;
+			return null;
 		}
 
         public override bool SetPropertyInt(NFGUID self, string strPropertyName, Int64 nValue)
@@ -378,7 +407,7 @@ namespace NFSDK
 			if (mhtObject.ContainsKey(self))
 			{
 				NFIObject xGameObject = (NFIObject)mhtObject[self];
-				return xGameObject.GetRecordManager().GetRecord(strRecordName);
+				return xGameObject.FindRecord(strRecordName);
 			}
 
 			return null;
@@ -529,6 +558,97 @@ namespace NFSDK
 
 			return varData;
 		}
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, int nValue)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindInt(nCol, nValue);
+                }
+            }
+            return -1;
+        }
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, double value)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindFloat(nCol, value);
+                }
+            }
+            return -1;
+
+        }
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, string value)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindString(nCol, value);
+                }
+            }
+            return -1;
+
+        }
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, NFGUID value)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindObject(nCol, value);
+                }
+            }
+            return -1;
+
+        }
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, NFVector2 value)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindVector2(nCol, value);
+                }
+            }
+            return -1;
+
+        }
+
+        public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, NFVector3 value)
+        {
+            if (mhtObject.ContainsKey(self))
+            {
+                NFIObject xGameObject = (NFIObject)mhtObject[self];
+                NFIRecord xRecord = xGameObject.GetRecordManager().GetRecord(strRecordName);
+                if (null != xRecord)
+                {
+                    return xRecord.FindVector3(nCol, value);
+                }
+            }
+            return -1;
+
+        }
+
+
         public override int FindRecordRow(NFGUID self, string strRecordName, int nCol, int nValue, ref NFDataList xDatalist)
         {
             if (mhtObject.ContainsKey(self))
@@ -619,6 +739,11 @@ namespace NFSDK
             return -1;
         }
 
+        public override int Random(int start, int end)
+		{
+            return mRandom.Next(start, end);
+		}
+
         void InitProperty(NFGUID self, string strClassName)
         {
             NFIClass xLogicClass = mxLogicClassModule.GetElement(strClassName);
@@ -680,12 +805,12 @@ namespace NFSDK
 			{
 				return mHandleDel;
 			}
+         
 			
 			private NFIObject.ClassEventHandler mHandleDel;
             private Dictionary<NFIObject.ClassEventHandler, string> mhtHandleDelList;
 
 
         }
-        
 	}
 }

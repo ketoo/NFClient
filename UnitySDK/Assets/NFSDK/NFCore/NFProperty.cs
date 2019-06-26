@@ -11,9 +11,9 @@ using System.Collections.Generic;
 
 namespace NFSDK
 {
-    public class NFCProperty : NFIProperty
+    public class NFProperty : NFIProperty
     {
-		public NFCProperty( NFGUID self, string strPropertyName, NFDataList varData)
+		public NFProperty( NFGUID self, string strPropertyName, NFDataList varData)
         {
             mSelf = self;
             msPropertyName = strPropertyName;
@@ -44,7 +44,7 @@ namespace NFSDK
             }
         }
 
-        public NFCProperty(NFGUID self, string strPropertyName, NFDataList.TData varData)
+        public NFProperty(NFGUID self, string strPropertyName, NFDataList.TData varData)
         {
             mSelf = self;
             msPropertyName = strPropertyName;
@@ -156,6 +156,12 @@ namespace NFSDK
 
 				return false;
 			}
+
+            if (value == -1)
+            {
+                int i = 0;
+                ++i;
+            }
 
             if (mxData.IntVal() != value)
             {
@@ -343,7 +349,13 @@ namespace NFSDK
 		public override void RegisterCallback(PropertyEventHandler handler)
 		{
 			doHandleDel += handler;
-		}
+
+            if (null != handler)
+            {
+                NFDataList.TData oldValue = new NFDataList.TData(mxData);
+                handler(mSelf, msPropertyName, oldValue, oldValue);
+            }
+        }
 
 		PropertyEventHandler doHandleDel;
 

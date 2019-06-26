@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using NFSDK;
 
-namespace NFSDK
+namespace NFrame
 {
     public class NFLogicPlugin : NFIPlugin
     {
@@ -16,24 +17,26 @@ namespace NFSDK
 
         public override void Install()
         {
-			Debug.Log("NFLogicPlugin Install");
             AddModule<NFNetModule>(new NFNetModule(mPluginManager));
             AddModule<NFLoginModule>(new NFLoginModule(mPluginManager));
-            AddModule<NFPlayerModule>(new NFPlayerModule(mPluginManager));
-            AddModule<NFPropertyModule>(new NFPropertyModule(mPluginManager));
-			AddModule<NFRecordModule>(new NFRecordModule(mPluginManager));
 			AddModule<NFHelpModule>(new NFHelpModule(mPluginManager));
+			AddModule<NFLogModule>(new NFLogModule(mPluginManager));
+			AddModule<NFNetEventModule>(new NFNetEventModule(mPluginManager));
+			AddModule<NFNetHandlerModule>(new NFNetHandlerModule(mPluginManager));
+			AddModule<NFLanguageModule>(new NFLanguageModule(mPluginManager));
+
         }
+
         public override void Uninstall()
         {
-			Debug.Log("NFLogicPlugin Uninstall");
+			mPluginManager.RemoveModule<NFLanguageModule>();
+			mPluginManager.RemoveModule<NFNetHandlerModule>();
+			mPluginManager.RemoveModule<NFNetEventModule>();
+			mPluginManager.RemoveModule<NFLogModule>();
+			mPluginManager.RemoveModule<NFHelpModule>();
+			mPluginManager.RemoveModule<NFLoginModule>();
+			mPluginManager.RemoveModule<NFNetModule>();
 
-			mPluginManager.RemoveModule("NFHelpModule");
-			mPluginManager.RemoveModule("NFNetModule");
-			mPluginManager.RemoveModule("NFLoginModule");
-			mPluginManager.RemoveModule("NFPlayerModule");
-			mPluginManager.RemoveModule("NFPropertyModule");
-			mPluginManager.RemoveModule("NFRecordyModule");
             mModules.Clear();
         }
     }

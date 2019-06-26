@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 using NFSDK;
+using NFrame;
 
-public class NFCRoot : MonoBehaviour 
+public class NFRoot : MonoBehaviour 
 {
+
+    public bool cmdTool = false;
+
 
 	NFIClassModule mClassModule;
 	NFNetModule mNetModule;
 	NFUIModule mUIModule;
+    UIGMTool mTool = new UIGMTool();
 
-    private NFCPluginManager mPluginManager;
-    private static NFCRoot _instance = null;
-    public static NFCRoot Instance()
+    private NFPluginManager mPluginManager;
+    private static NFRoot _instance = null;
+    public static NFRoot Instance()
     {
         return _instance;
     }
@@ -21,8 +26,8 @@ public class NFCRoot : MonoBehaviour
         _instance = this;
 
         Debug.Log("Root Start");
-        mPluginManager = new NFCPluginManager();
-        mPluginManager.Registered(new NFCSDKPlugin(mPluginManager));
+        mPluginManager = new NFPluginManager();
+        mPluginManager.Registered(new NFSDKPlugin(mPluginManager));
         mPluginManager.Registered(new NFLogicPlugin(mPluginManager));
 		mPluginManager.Registered(new NFUIPlugin(mPluginManager));
 		mPluginManager.Registered(new NFScenePlugin(mPluginManager));
@@ -32,18 +37,22 @@ public class NFCRoot : MonoBehaviour
 		mNetModule = mPluginManager.FindModule<NFNetModule>();
 		mUIModule = mPluginManager.FindModule<NFUIModule>();
 
-		mClassModule.SetDataPath("../../_Out/");
+        //mClassModule.SetDataPath("../../_Out/");
 
-		if (RuntimePlatform.Android == Application.platform
+        if (RuntimePlatform.Android == Application.platform
 		    ||RuntimePlatform.IPhonePlayer == Application.platform)
 		{
-			mPluginManager.FindModule<NFIClassModule>().SetDataPath("./");
+			//mPluginManager.FindModule<NFIClassModule>().SetDataPath("./");
 		}
 
+        mPluginManager.Awake();
         mPluginManager.Init();
         mPluginManager.AfterInit();
 
-		mUIModule.ShowUI<UILogin>();
+		mUIModule.ShowUI<NFUILogin>();
+        mTool.Init();
+
+        mNetModule.StartConnect("192.168.13.133", 14001);
 
         DontDestroyOnLoad(gameObject);
 	}
@@ -60,4 +69,12 @@ public class NFCRoot : MonoBehaviour
     {
 		mPluginManager.Execute();
 	}
+
+    private void OnGUI()
+    {
+        if (cmdTool)
+        {
+            mTool.OnGUI();
+        }
+    }
 }

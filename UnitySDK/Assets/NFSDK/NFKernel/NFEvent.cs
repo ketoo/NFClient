@@ -5,9 +5,9 @@ using System.Text;
 
 namespace NFSDK
 {
-	class NFCEvent : NFIEvent
+	class NFEvent : NFIEvent
 	{
-		public NFCEvent(int nEventID, NFDataList valueList)
+		public NFEvent(int nEventID, NFDataList valueList)
 		{
 			mnEventID = nEventID;
             mArgValueList = valueList;

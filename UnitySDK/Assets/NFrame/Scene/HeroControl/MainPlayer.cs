@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using NFSDK;
+using NFrame;
 
 
 public class MainPlayer : MonoBehaviour {
-
-	NFPlayerModule mPlayerModule;
 
     private float mSyncTime = 0.3f;
     private float mSyncTimeTick = 0.0f;
@@ -19,9 +18,14 @@ public class MainPlayer : MonoBehaviour {
 	private CharacterController mController;
 	private Animator mAnimation;
 	private bool mbMoved = false;
-	void Start()
+
+    NFNetModule mNetModule;
+    NFLoginModule mLoginModule;
+
+    void Start()
     {
-        mPlayerModule = NFCPluginManager.Instance().FindModule<NFPlayerModule>();
+        mNetModule = NFPluginManager.Instance().FindModule<NFNetModule>();
+        mLoginModule = NFPluginManager.Instance().FindModule<NFLoginModule>();
 
         mController = GetComponent<CharacterController>();
 		mAnimation = GetComponent<Animator>();
@@ -69,8 +73,6 @@ public class MainPlayer : MonoBehaviour {
             {
 				moveDirection.y = jumpSpeed;
                 mAnimation.Play("jump");
-                
-				mPlayerModule.RequireJump(transform.position);
             }
 
         }
@@ -91,7 +93,7 @@ public class MainPlayer : MonoBehaviour {
 
 		if (mbMoved && grounded && mSyncTimeTick > mSyncTime)
         {
-			mPlayerModule.RequireMove(transform.position);
+            mNetModule.RequireMove(mLoginModule.mRoleID, 0, transform.position, transform.position);
             mSyncTimeTick = 0.0f;
 			mbMoved = false;
         }

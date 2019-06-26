@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace NFSDK
 {
-	public class NFCEventModule : NFIEventModule
+	public class NFEventModule : NFIEventModule
     {
         public override void Awake() {}
         public override void Init() {}
@@ -15,13 +15,13 @@ namespace NFSDK
         public override void BeforeShut() { }
         public override void Shut() {  }
 
-        private static NFCEventModule _instance = null;
-        public static NFCEventModule Instance()
+        private static NFEventModule _instance = null;
+        public static NFEventModule Instance()
         {
             return _instance;
         }
 
-        public NFCEventModule(NFIPluginManager pluginManager)
+        public NFEventModule(NFIPluginManager pluginManager)
         {
             _instance = this;
             mPluginManager = pluginManager;
@@ -33,7 +33,7 @@ namespace NFSDK
         {
             if (!mhtEvent.ContainsKey(nEventID))
             {
-				mhtEvent.Add(nEventID, new NFCEvent(nEventID, new NFDataList()));
+				mhtEvent.Add(nEventID, new NFEvent(nEventID, new NFDataList()));
             }
 
 			NFIEvent identEvent = (NFIEvent)mhtEvent[nEventID];

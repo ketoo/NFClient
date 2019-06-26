@@ -11,9 +11,9 @@ using System.Collections.Generic;
 
 namespace NFSDK
 {
-	public class NFCRecordManager : NFIRecordManager
+	public class NFRecordManager : NFIRecordManager
 	{
-		public NFCRecordManager(NFGUID ident)
+		public NFRecordManager(NFGUID ident)
 		{
 			mSelf = ident;
             mhtRecord = new Dictionary<string, NFIRecord>();
@@ -30,7 +30,7 @@ namespace NFSDK
 
 		public override NFIRecord AddRecord(string strRecordName, int nRow, NFDataList varData, NFDataList varTag)
 		{
-			NFIRecord record = new NFCRecord (mSelf, strRecordName, nRow, varData, varTag);
+			NFIRecord record = new NFRecord (mSelf, strRecordName, nRow, varData, varTag);
 			mhtRecord.Add(strRecordName, record);
 
 			return record;

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using NFSDK;
 
-namespace NFSDK
+namespace NFrame
 {
     public class NFUIPlugin : NFIPlugin
     {
@@ -23,7 +24,7 @@ namespace NFSDK
         {
 			Debug.Log("NFUIPlugin Uninstall");
 
-			mPluginManager.RemoveModule("NFUIModule");
+			mPluginManager.RemoveModule<NFUIModule>();
 
             mModules.Clear();
         }

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NFSDK;
 
-public class UIGMTool : UIDialog 
+public class UIGMTool : NFUIDialog 
 {
 
     private NFGUID xTargetIdent = new NFGUID();
@@ -23,10 +23,14 @@ public class UIGMTool : UIDialog
 
 	private NFIKernelModule mKernelModule;
 
+    public override void Init()
+    {
+        NFIPluginManager xPluginManager = NFPluginManager.Instance();
+        mKernelModule = xPluginManager.FindModule<NFIKernelModule>();
+    }
+
 	void Start()
     {
-        NFIPluginManager xPluginManager = NFCPluginManager.Instance();
-		mKernelModule = xPluginManager.FindModule<NFIKernelModule>();
     }
 
     GUIStyle buttonLeft;
@@ -270,4 +274,5 @@ public class UIGMTool : UIDialog
     {
 		OnGMGUI(800, 600);
     }
+
 }

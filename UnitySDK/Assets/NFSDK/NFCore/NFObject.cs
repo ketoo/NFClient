@@ -10,9 +10,9 @@ using System.Text;
 
 namespace NFSDK
 {
-    public class NFCObject : NFIObject
+    public class NFObject : NFIObject
     {
-        public NFCObject(NFGUID self, int nContainerID, int nGroupID, string strClassName, string strConfigIndex)
+        public NFObject(NFGUID self, int nContainerID, int nGroupID, string strClassName, string strConfigIndex)
         {
             mSelf = self;
             mstrClassName = strClassName;
@@ -22,15 +22,15 @@ namespace NFSDK
             Init();
         }
 
-        ~NFCObject()
+        ~NFObject()
         {
             Shut();
         }
 
         public override void Init()
         {
-            mRecordManager = new NFCRecordManager(mSelf);
-            mPropertyManager = new NFCPropertyManager(mSelf);
+            mRecordManager = new NFRecordManager(mSelf);
+            mPropertyManager = new NFPropertyManager(mSelf);
 
             return;
         }
@@ -83,14 +83,9 @@ namespace NFSDK
             return mstrConfigIndex;
         }
 
-        public override bool FindProperty(string strPropertyName)
+		public override NFIProperty FindProperty(string strPropertyName)
         {
-            if (null != mPropertyManager.GetProperty(strPropertyName))
-            {
-                return true;
-            }
-
-            return false;
+			return mPropertyManager.GetProperty(strPropertyName);
         }
 
         public override bool SetPropertyInt(string strPropertyName, Int64 nValue)
@@ -98,9 +93,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddInt(0);
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_INT);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue);
             }
 
             property.SetInt(nValue);
@@ -112,9 +106,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddFloat(0.0f);
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_FLOAT);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue);
             }
 
             property.SetFloat(fValue);
@@ -126,9 +119,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddString("");
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue); ;
             }
 
             property.SetString(strValue);
@@ -140,9 +132,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddObject(new NFGUID());
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_OBJECT);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue);
             }
 
             property.SetObject(obj);
@@ -155,9 +146,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddVector2(new NFVector2());
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR2);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue);
             }
 
             property.SetVector2(obj);
@@ -170,9 +160,8 @@ namespace NFSDK
             NFIProperty property = mPropertyManager.GetProperty(strPropertyName);
             if (null == property)
             {
-                NFDataList valueList = new NFDataList();
-                valueList.AddVector3(new NFVector3());
-                property = mPropertyManager.AddProperty(strPropertyName, valueList);
+                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR3);
+                property = mPropertyManager.AddProperty(strPropertyName, xValue);
             }
 
             property.SetVector3(obj);
@@ -246,14 +235,9 @@ namespace NFSDK
             return NFDataList.NULL_VECTOR3;
         }
 
-        public override bool FindRecord(string strRecordName)
+		public override NFIRecord FindRecord(string strRecordName)
         {
-            NFIRecord record = mRecordManager.GetRecord(strRecordName);
-            if (null != record)
-            {
-                return true;
-            }
-            return false;
+            return mRecordManager.GetRecord(strRecordName);
         }
 
         public override bool SetRecordInt(string strRecordName, int nRow, int nCol, Int64 nValue)

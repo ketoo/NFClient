@@ -14,9 +14,9 @@ using System.IO;
 
 namespace NFSDK
 {
-    public class NFCClass : NFIClass
+    public class NFClass : NFIClass
 	{
-        public NFCClass()
+        public NFClass()
         {
             mbEncrypt = false;
         }
@@ -83,8 +83,8 @@ namespace NFSDK
         }
 
         /////////////////////////////////////
-        private NFIPropertyManager mxPropertyManager = new NFCPropertyManager(new NFGUID());
-        private NFIRecordManager mxRecordManager = new NFCRecordManager(new NFGUID());
+        private NFIPropertyManager mxPropertyManager = new NFPropertyManager(new NFGUID());
+        private NFIRecordManager mxRecordManager = new NFRecordManager(new NFGUID());
         private List<string> mxIntansList = new List<string>();
         private string mstrName;
         private string mstrPath;

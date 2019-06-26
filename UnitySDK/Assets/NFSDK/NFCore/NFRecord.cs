@@ -11,10 +11,10 @@ using System.Collections.Generic;
 
 namespace NFSDK
 {
-    public class NFCRecord : NFIRecord
+    public class NFRecord : NFIRecord
     {
 
-		public NFCRecord(NFGUID self, string strRecordName, int nRow, NFDataList varData, NFDataList varTag)
+		public NFRecord(NFGUID self, string strRecordName, int nRow, NFDataList varData, NFDataList varTag)
 		{
 			mSelf = self;
 			mnRow = nRow;
@@ -94,7 +94,7 @@ namespace NFSDK
 
                     if (null != doHandleDel)
                     {
-                        doHandleDel(mSelf, mstrRecordName, eRecordOptype.Add, nRow, 0, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
+                        doHandleDel(mSelf, mstrRecordName, ERecordOptype.Add, nRow, 0, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
                     }
 					return nRow;
 				}
@@ -143,7 +143,7 @@ namespace NFSDK
 	                   
 	                    if (null != doHandleDel)
 	                    {
-	                        doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+	                        doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
 	                    }
 	                }
 				}
@@ -177,7 +177,7 @@ namespace NFSDK
 	
 	                    if (null != doHandleDel)
 	                    {
-	                        doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+	                        doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
 	                    }
 	                }
 	
@@ -211,7 +211,7 @@ namespace NFSDK
 	
 	                    if (null != doHandleDel)
 	                    {
-	                        doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+	                        doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
 	                    }
 	                }
 				}
@@ -245,7 +245,7 @@ namespace NFSDK
 
                         if (null != doHandleDel)
                         {
-                            doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+                            doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
                         }
                     }
 				}
@@ -279,7 +279,7 @@ namespace NFSDK
 
                         if (null != doHandleDel)
                         {
-                            doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+                            doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
                         }
                     }
                 }
@@ -313,7 +313,7 @@ namespace NFSDK
 
                         if (null != doHandleDel)
                         {
-                            doHandleDel(mSelf, mstrRecordName, eRecordOptype.Update, nRow, nCol, oldValue, newValue);
+                            doHandleDel(mSelf, mstrRecordName, ERecordOptype.Update, nRow, nCol, oldValue, newValue);
                         }
                     }
                 }
@@ -391,7 +391,7 @@ namespace NFSDK
 	           
 	            if (null != doHandleDel)
 	             {
-	                 doHandleDel(mSelf, mstrRecordName, eRecordOptype.Swap, nOriginRow, nTargetRow, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
+	                 doHandleDel(mSelf, mstrRecordName, ERecordOptype.Swap, nOriginRow, nTargetRow, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
 	             }
 	            return true;
 			}
@@ -494,6 +494,90 @@ namespace NFSDK
 				}
 			}
 
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, int value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (valueList.IntVal(nCol) == value)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, double value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (Math.Abs(valueList.FloatVal(nCol) - value) < 0.01)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, string value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (valueList.StringVal(nCol) == value)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, NFGUID value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (valueList.ObjectVal(nCol) == value)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, NFVector2 value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (valueList.Vector2Val(nCol) == value)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public override int FindRecordRow(int nCol, NFVector3 value)
+        {
+            foreach (int i in mhtRecordVec.Keys)
+            {
+                NFDataList valueList = (NFDataList)mhtRecordVec[i];
+                if (valueList.Vector3Val(nCol) == value)
+                {
+                    return i;
+                }
+            }
 
             return -1;
         }
@@ -659,7 +743,7 @@ namespace NFSDK
             {
 				if (null != doHandleDel)
                 {
-                    doHandleDel(mSelf, mstrRecordName, eRecordOptype.Del, nRow, 0, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
+                    doHandleDel(mSelf, mstrRecordName, ERecordOptype.Del, nRow, 0, NFDataList.NULL_TDATA, NFDataList.NULL_TDATA);
                 }
 				mhtRecordVec.Remove(nRow);
 				return true;

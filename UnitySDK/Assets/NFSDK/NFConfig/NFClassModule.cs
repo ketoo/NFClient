@@ -14,10 +14,10 @@ using UnityEngine;
 
 namespace NFSDK
 {
-    public class NFCClassModule : NFIClassModule
+    public class NFClassModule : NFIClassModule
     {
 
-		public NFCClassModule(NFIPluginManager pluginManager)
+		public NFClassModule(NFIPluginManager pluginManager)
         {
             mPluginManager = pluginManager;
         }
@@ -50,32 +50,11 @@ namespace NFSDK
             ClearLogicClass();
             
 
-            string strLogicPath = mstrPath + "NFDataCfg/Struct/LogicClass.xml";
+            string strLogicPath = mstrPath + "NFDataCfg/Struct/LogicClass";
+			TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-			Debug.Log(strLogicPath);
-
-			XmlDocument xmldoc = new XmlDocument();
-
-            if (RuntimePlatform.Android == Application.platform
-                || RuntimePlatform.IPhonePlayer == Application.platform)
-            {
-                strLogicPath = strLogicPath.Replace(".xml", "");
-                TextAsset textAsset = (TextAsset)Resources.Load(strLogicPath);
-                xmldoc.LoadXml(textAsset.text);
-
-            }
-            else
-            {
-				try
-                {
-                    xmldoc.Load(strLogicPath);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogFormat("Load Config Error {0}", e.ToString());
-                }
-            }
-            
+			XmlDocument xmldoc = new XmlDocument ();
+			xmldoc.LoadXml ( textAsset.text );
             XmlNode root = xmldoc.SelectSingleNode("XML");
 
             LoadLogicClass(root);
@@ -100,7 +79,7 @@ namespace NFSDK
         {
             if (!mhtObject.ContainsKey(strName))
             {
-                NFIClass xElement = new NFCClass();
+                NFIClass xElement = new NFClass();
                 xElement.SetName(strName);
                 xElement.SetEncrypt(false);
 
@@ -132,7 +111,7 @@ namespace NFSDK
                 XmlAttribute strPath = xNodeClass.Attributes["Path"];
                 XmlAttribute strInstancePath = xNodeClass.Attributes["InstancePath"];
 
-                NFIClass xLogicClass = new NFCClass();
+                NFIClass xLogicClass = new NFClass();
                 mhtObject.Add(strID.Value, xLogicClass);
 
                 xLogicClass.SetName(strID.Value);
@@ -161,7 +140,7 @@ namespace NFSDK
                 LoadLogicClassProperty((string)kv.Key);
             }
 
-            //‘ŸŒ™√ø∏ˆ¿‡º”‘ÿiobjectµƒ Ù–‘
+            //ÂÜç‰∏∫ÊØè‰∏™Á±ªÂä†ËΩΩiobjectÁöÑÂ±ûÊÄß
             foreach (KeyValuePair<string, NFIClass> kv in xTable)
             {
                 if (kv.Key != "IObject")
@@ -185,30 +164,14 @@ namespace NFSDK
             NFIClass xLogicClass = GetElement(strName);
             if (null != xLogicClass)
             {
-            
-				XmlDocument xmldoc = new XmlDocument();
                 string strLogicPath = mstrPath + xLogicClass.GetPath();
 
-                if (RuntimePlatform.Android == Application.platform
-                    || RuntimePlatform.IPhonePlayer == Application.platform)
-                {
-                    strLogicPath = strLogicPath.Replace(".xml", "");
-                    TextAsset textAsset = (TextAsset)Resources.Load(strLogicPath);
-                    xmldoc.LoadXml(textAsset.text);
+				strLogicPath = strLogicPath.Replace (".xml", "");
 
-                }
-                else
-                {
-					try
-                    {
-                        xmldoc.Load(strLogicPath);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogFormat("Load Config Error {0}", e.ToString());
-                    }
+				TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-                }
+				XmlDocument xmldoc = new XmlDocument ();
+				xmldoc.LoadXml ( textAsset.text );
 				XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
                 XmlNode xNodePropertys = xRoot.SelectSingleNode("Propertys");
@@ -225,32 +188,44 @@ namespace NFSDK
                     {
                         case "int":
                             {
-                                NFDataList xValue = new NFDataList();
-                                xValue.AddInt(0);
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_INT);
                                 NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
                                 xProperty.SetUpload(bUpload);
                             }
                             break;
                         case "float":
                             {
-                                NFDataList xValue = new NFDataList();
-                                xValue.AddFloat(0.0);
+
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_FLOAT);
                                 NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
                                 xProperty.SetUpload(bUpload);
                             }
                             break;
                         case "string":
                             {
-                                NFDataList xValue = new NFDataList();
-                                xValue.AddString("");
+
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
                                 NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
                                 xProperty.SetUpload(bUpload);
                             }
                             break;
                         case "object":
                             {
-                                NFDataList xValue = new NFDataList();
-                                xValue.AddObject(new NFGUID(0, 0));
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_OBJECT);
+                                NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
+                                xProperty.SetUpload(bUpload);
+                            }
+                            break;
+                        case "vector2":
+                            {
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR2);
+                                NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
+                                xProperty.SetUpload(bUpload);
+                            }
+                            break;
+                        case "vector3":
+                            {
+                                NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR3);
                                 NFIProperty xProperty = xLogicClass.GetPropertyManager().AddProperty(strID.Value, xValue);
                                 xProperty.SetUpload(bUpload);
                             }
@@ -268,29 +243,13 @@ namespace NFSDK
             NFIClass xLogicClass = GetElement(strName);
             if (null != xLogicClass)
             {
-				XmlDocument xmldoc = new XmlDocument();
-                string strLogicPath = mstrPath + xLogicClass.GetPath();
+				string strLogicPath = mstrPath + xLogicClass.GetPath();
+				strLogicPath = strLogicPath.Replace (".xml", "");
 
-                if (RuntimePlatform.Android == Application.platform
-                    || RuntimePlatform.IPhonePlayer == Application.platform)
-                {
-                    strLogicPath = strLogicPath.Replace(".xml", "");
-                    TextAsset textAsset = (TextAsset)Resources.Load(strLogicPath);
-                    xmldoc.LoadXml(textAsset.text);
+				TextAsset textAsset = (TextAsset) Resources.Load(strLogicPath); 
 
-                }
-                else
-                {
-					try
-                    {
-                        xmldoc.Load(strLogicPath);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogFormat("Load Config Error {0}", e.ToString());
-                    }
-
-                }
+				XmlDocument xmldoc = new XmlDocument ();
+				xmldoc.LoadXml ( textAsset.text );
 				XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
                 XmlNode xNodePropertys = xRoot.SelectSingleNode("Records");

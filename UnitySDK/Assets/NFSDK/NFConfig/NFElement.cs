@@ -5,11 +5,11 @@ using System.Text;
 
 namespace NFSDK
 {
-	class NFCElement : NFIElement
+	class NFElement : NFIElement
 	{
-        public NFCElement()
+        public NFElement()
         {
-            mxPropertyManager = new NFCPropertyManager(new NFGUID());
+            mxPropertyManager = new NFPropertyManager(new NFGUID());
         }
 
         public override NFIPropertyManager GetPropertyManager()

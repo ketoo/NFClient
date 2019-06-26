@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NFrame;
+using System.IO;
+using System;
 
 namespace NFSDK
 {
@@ -8,9 +11,9 @@ namespace NFSDK
 	{
 		private NFIKernelModule mKernelModule;
 		private NFNetModule mNetModule;
-		private NFPlayerModule mPlayerModule;
 		private NFIEventModule mEventModule;
-		private NFHelpModule mHelpModule;
+        private NFHelpModule mHelpModule;
+        private NFLoginModule mLoginModule;
 
 
 		private Dictionary<NFGUID, GameObject> mGameObjectMap = new Dictionary<NFGUID, GameObject>();
@@ -30,28 +33,28 @@ namespace NFSDK
 
 		public override void AfterInit() 
 		{
-			mPlayerModule = FindModule<NFPlayerModule>();
 			mNetModule = FindModule<NFNetModule>();
 			mKernelModule = FindModule<NFIKernelModule>();
 			mEventModule = FindModule<NFIEventModule>();
-			mHelpModule = FindModule<NFHelpModule>();
+            mHelpModule = FindModule<NFHelpModule>();
+            mLoginModule = FindModule<NFLoginModule>();
 
             mKernelModule.RegisterClassCallBack(NFrame.Player.ThisName, OnClassPlayerEventHandler);
             mKernelModule.RegisterClassCallBack(NFrame.NPC.ThisName, OnClassNPCEventHandler);
 
-			mEventModule.RegisterCallback((int)NFPlayerModule.Event.SwapScene, SwapSceneEventHandler);
-			mEventModule.RegisterCallback((int)NFPlayerModule.Event.PlayerMove, OnPlayerMove);
+            mNetModule.AddReceiveCallBack(NFMsg.EGameMsgID.EGMI_ACK_SWAP_SCENE, SwapSceneEventHandler);
+            mNetModule.AddReceiveCallBack(NFMsg.EGameMsgID.EGMI_ACK_MOVE, OnPlayerMove);
 
+            //mEventModule.RegisterCallback((int)NFPlayerModule.Event.SwapScene, SwapSceneEventHandler);
+			//mEventModule.RegisterCallback((int)NFPlayerModule.Event.PlayerMove, OnPlayerMove);
 		}
 
 		public override void Execute() {}
 		public override void BeforeShut() {  }
 		public override void Shut() {}
 
-		protected void SwapSceneEventHandler(NFDataList valueList)
+		protected void SwapSceneEventHandler(UInt16 id, MemoryStream stream)
 		{
-			string strSceneID = valueList.StringVal(0);
-			NFVector3 vPos = valueList.Vector3Val(1);
 
             //TODO
 			Application.LoadLevel(1);
@@ -66,20 +69,30 @@ namespace NFSDK
 		}
   
 
-		public void OnPlayerMove(NFDataList valueList)
+		public void OnPlayerMove(UInt16 id, MemoryStream stream)
         {
-            NFGUID tar = valueList.ObjectVal(0);
+            NFMsg.MsgBase xMsg = NFMsg.MsgBase.Parser.ParseFrom(stream);
 
-			if (tar == mPlayerModule.mRoleID)
+            NFMsg.ReqAckPlayerMove xData = NFMsg.ReqAckPlayerMove.Parser.ParseFrom(xMsg.msg_data);
+
+            if (xData.target_pos.Count <= 0)
+            {
+                return;
+            }
+
+            NFGUID tar = mHelpModule.PBToNF(xData.mover);
+
+            if (tar == mLoginModule.mRoleID)
                 return;
 
 			GameObject player = GetObject(tar);
 			OtherPlayer otherPlayer = player.GetComponent<OtherPlayer>();
 
-			double fSpeed = valueList.FloatVal(1);
-			long nType = valueList.IntVal(2);
-            NFVector3 pos = valueList.Vector3Val(3);
-			Vector3 vPos = new Vector3(pos.X(), pos.Y(), pos.Z());
+            float fSpeed = xData.speed;
+
+            long nType = xData.moveType;
+            NFVector3 pos = mHelpModule.PBToNF(xData.target_pos[0]);
+            Vector3 vPos = new Vector3(pos.X(), pos.Y(), pos.Z());
 
 			if (nType > 0)
 			{
@@ -99,15 +112,16 @@ namespace NFSDK
             {
                 Debug.Log("OBJECT_CREATE:" + self.ToString());
 
-                string strConfigID = mKernelModule.QueryPropertyString(self, "ConfigID");
+                string strConfigID = mKernelModule.QueryPropertyString(self, NFrame.Player.ConfigID);
                 Vector3 vec = new Vector3();
-                vec.x = (float)mKernelModule.QueryPropertyFloat(self, "X");
-                vec.y = (float)mKernelModule.QueryPropertyFloat(self, "Y");
-                vec.z = (float)mKernelModule.QueryPropertyFloat(self, "Z");
+                NFVector3 vector3 = mKernelModule.QueryPropertyVector3(self, NFrame.Player.Position);
+                //vec.x = vector3.X();
+                //vec.y = vector3.Y();
+                //vec.z = vector3.Z();
 
                 //MainPlayer
                 string strPrefabPath = "Player/AIThirdPersonController";
-				if (self == mPlayerModule.mRoleID)
+                if (self == mLoginModule.mRoleID)
                 {
                     strPrefabPath = "Player/ThirdPersonController";
                 }
@@ -133,7 +147,7 @@ namespace NFSDK
                 player.transform.position = vec;
 
                 //MainPlayer
-				if (self == mPlayerModule.mRoleID)
+				if (self == mLoginModule.mRoleID)
                 {
                     player.AddComponent<MainPlayer>();
                 }
@@ -159,11 +173,12 @@ namespace NFSDK
         {
             if (eType == NFIObject.CLASS_EVENT_TYPE.OBJECT_CREATE)
             {
-                string strConfigID = mKernelModule.QueryPropertyString(self, "ConfigID");
+                string strConfigID = mKernelModule.QueryPropertyString(self, NFrame.Player.ConfigID);
                 Vector3 vec = new Vector3();
-                vec.x = (float)mKernelModule.QueryPropertyFloat(self, "X");
-                vec.y = (float)mKernelModule.QueryPropertyFloat(self, "Y");
-                vec.z = (float)mKernelModule.QueryPropertyFloat(self, "Z");
+                NFVector3 vector3 = mKernelModule.QueryPropertyVector3(self, NFrame.Player.Position);
+                //vec.x = vector3.X();
+                //vec.y = vector3.Y();
+                //vec.z = vector3.Z();
 
                 string strPrefabPath = "";
             //    if (strConfigID.Length <= 0)
@@ -175,7 +190,7 @@ namespace NFSDK
             //        strPrefabPath = NFCElementModule.Instance()..QueryPropertyString(strConfigID, "Prefab");
             //    }
 
-                strPrefabPath = "Player/MainPlayer";
+                strPrefabPath = "Player/AIThirdPersonController";
                 GameObject playerPerf = Resources.Load<GameObject>(strPrefabPath);
 				GameObject player = GameObject.Instantiate(playerPerf);
 

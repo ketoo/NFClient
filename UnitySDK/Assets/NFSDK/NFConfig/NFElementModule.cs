@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace NFSDK
 {
-    public class NFCElementModule : NFIElementModule
+    public class NFElementModule : NFIElementModule
     {
 
-        public NFCElementModule(NFIPluginManager pluginManager)
+        public NFElementModule(NFIPluginManager pluginManager)
         {
             mPluginManager = pluginManager;
             mhtObject = new Dictionary<string, NFIElement>();
@@ -53,9 +53,9 @@ namespace NFSDK
             foreach (KeyValuePair<string, NFIClass> kv in xTable)
             {
                 LoadInstanceElement(kv.Value);
-			}
+            }
 
-			return true;
+            return false;
         }
 
         public override bool Clear()
@@ -89,7 +89,7 @@ namespace NFSDK
             NFIElement xElement = GetElement(strConfigName);
             if (null != xElement)
             {
-                 return xElement.QueryFloat(strPropertyName);
+                return xElement.QueryFloat(strPropertyName);
             }
 
             return 0.0;
@@ -138,9 +138,12 @@ namespace NFSDK
             string strLogicPath = mstrRootPath;
             strLogicPath += xLogicClass.GetInstance();
 
-            XmlDocument xmldoc = new XmlDocument();
-            xmldoc.Load(strLogicPath);
+            strLogicPath = strLogicPath.Replace(".xml", "");
 
+            TextAsset textAsset = (TextAsset)Resources.Load(strLogicPath);
+
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.LoadXml(textAsset.text);
             XmlNode xRoot = xmldoc.SelectSingleNode("XML");
 
             XmlNodeList xNodeList = xRoot.SelectNodes("Object");
@@ -156,7 +159,7 @@ namespace NFSDK
                 NFIElement xElement = GetElement(strID.Value);
                 if (null == xElement)
                 {
-                    xElement = new NFCElement();
+                    xElement = new NFElement();
                     AddElement(strID.Value, xElement);
                     xLogicClass.AddConfigName(strID.Value);
 
@@ -172,32 +175,48 @@ namespace NFSDK
                             {
                                 case NFDataList.VARIANT_TYPE.VTYPE_INT:
                                     {
-                                        NFDataList xValue = new NFDataList();
-                                        xValue.AddInt(int.Parse(xAttribute.Value));
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_INT);
+                                        xValue.Set(int.Parse(xAttribute.Value));
                                         NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
                                         property.SetUpload(xProperty.GetUpload());
                                     }
                                     break;
                                 case NFDataList.VARIANT_TYPE.VTYPE_FLOAT:
                                     {
-                                        NFDataList xValue = new NFDataList();
-                                        xValue.AddFloat(float.Parse(xAttribute.Value));
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_FLOAT);
+                                        xValue.Set(float.Parse(xAttribute.Value));
                                         NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
                                         property.SetUpload(xProperty.GetUpload());
                                     }
                                     break;
                                 case NFDataList.VARIANT_TYPE.VTYPE_STRING:
                                     {
-                                        NFDataList xValue = new NFDataList();
-                                        xValue.AddString(xAttribute.Value);
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_STRING);
+                                        xValue.Set(xAttribute.Value);
                                         NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
                                         property.SetUpload(xProperty.GetUpload());
                                     }
                                     break;
                                 case NFDataList.VARIANT_TYPE.VTYPE_OBJECT:
                                     {
-                                        NFDataList xValue = new NFDataList();
-                                        xValue.AddObject(new NFGUID(0, int.Parse(xAttribute.Value)));
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_OBJECT);
+                                        xValue.Set(new NFGUID(0, int.Parse(xAttribute.Value)));
+                                        NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
+                                        property.SetUpload(xProperty.GetUpload());
+                                    }
+                                    break;
+                                case NFDataList.VARIANT_TYPE.VTYPE_VECTOR2:
+                                    {
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR2);
+                                        //xValue.Set(new NFGUID(0, int.Parse(xAttribute.Value)));
+                                        NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
+                                        property.SetUpload(xProperty.GetUpload());
+                                    }
+                                    break;
+                                case NFDataList.VARIANT_TYPE.VTYPE_VECTOR3:
+                                    {
+                                        NFDataList.TData xValue = new NFDataList.TData(NFDataList.VARIANT_TYPE.VTYPE_VECTOR3);
+                                        //xValue.Set(new NFGUID(0, int.Parse(xAttribute.Value)));
                                         NFIProperty property = xElement.GetPropertyManager().AddProperty(xAttribute.Name, xValue);
                                         property.SetUpload(xProperty.GetUpload());
                                     }

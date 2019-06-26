@@ -7,24 +7,12 @@ using System.Collections;
 
 namespace NFSDK
 {
-	public class NFCPropertyManager : NFIPropertyManager
+	public class NFPropertyManager : NFIPropertyManager
 	{
-		public NFCPropertyManager(NFGUID self)
+		public NFPropertyManager(NFGUID self)
 		{
 			mSelf = self;
 			mhtProperty = new Hashtable();
-		}
-		
-		public override NFIProperty AddProperty(string strPropertyName, NFDataList varData)
-		{
-			NFIProperty xProperty = null;
-			if (!mhtProperty.ContainsKey(strPropertyName))
-			{
-				xProperty  = new NFCProperty(mSelf, strPropertyName, varData);
-				mhtProperty[strPropertyName] = xProperty;
-			}
-
-			return xProperty;
 		}
 
         public override NFIProperty AddProperty(string strPropertyName, NFDataList.TData varData)
@@ -32,21 +20,21 @@ namespace NFSDK
             NFIProperty xProperty = null;
             if (!mhtProperty.ContainsKey(strPropertyName))
             {
-                xProperty = new NFCProperty(mSelf, strPropertyName, varData);
+                xProperty = new NFProperty(mSelf, strPropertyName, varData);
                 mhtProperty[strPropertyName] = xProperty;
             }
 
             return xProperty;
         }
 
-		public override bool SetProperty(string strPropertyName, NFDataList varData)
+		public override bool SetProperty(string strPropertyName, NFDataList.TData varData)
 		{
 			if (mhtProperty.ContainsKey(strPropertyName))
 			{
-				NFIProperty xProperty = (NFCProperty)mhtProperty[strPropertyName];
+				NFIProperty xProperty = (NFProperty)mhtProperty[strPropertyName];
 				if (null != xProperty)
 				{
-					xProperty.SetData(varData.GetData(0));
+					xProperty.SetData(varData);
 				} 
 			}
 			return true;
@@ -57,7 +45,7 @@ namespace NFSDK
 			NFIProperty xProperty = null;
 			if (mhtProperty.ContainsKey(strPropertyName))
 			{
-				xProperty = (NFCProperty)mhtProperty[strPropertyName];
+				xProperty = (NFProperty)mhtProperty[strPropertyName];
 				return xProperty;
 			}
 
@@ -68,7 +56,7 @@ namespace NFSDK
 		{
 			if (mhtProperty.ContainsKey(strPropertyName))
 			{
-				NFIProperty xProperty = (NFCProperty)mhtProperty[strPropertyName];
+				NFIProperty xProperty = (NFProperty)mhtProperty[strPropertyName];
 				xProperty.RegisterCallback(handler);
 			}
 		}
