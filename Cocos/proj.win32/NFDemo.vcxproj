@@ -740,62 +740,61 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="..\..\..\NFComm\NFConfigPlugin\NFCClassModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFConfigPlugin\NFCElementModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFCore\NFCObject.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFCore\NFCProperty.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFCore\NFCPropertyManager.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFCore\NFCRecord.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFCore\NFCRecordManager.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFCEventModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFCKernelModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFCSceneAOIModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFCScheduleModule.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFLogPlugin\NFCLogModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFConfigPlugin\NFClassModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFConfigPlugin\NFElementModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFCore\NFObject.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFCore\NFProperty.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFCore\NFPropertyManager.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFCore\NFRecord.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFCore\NFRecordManager.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFEventModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFKernelModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFKernelPlugin\NFScheduleModule.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFLogPlugin\NFLogModule.cpp" />
     <ClCompile Include="..\..\..\NFComm\NFMessageDefine\NFDefine.pb.cc" />
     <ClCompile Include="..\..\..\NFComm\NFMessageDefine\NFMsgBase.pb.cc" />
     <ClCompile Include="..\..\..\NFComm\NFMessageDefine\NFMsgDefine.cpp" />
     <ClCompile Include="..\..\..\NFComm\NFMessageDefine\NFMsgPreGame.pb.cc" />
     <ClCompile Include="..\..\..\NFComm\NFMessageDefine\NFMsgShare.pb.cc" />
-    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFCNet.cpp">
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ForcedIncludeFiles>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFCNetClientModule.cpp">
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ForcedIncludeFiles>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFCNetModule.cpp">
+    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFNet.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="..\..\..\NFComm\NFPluginLoader\NFCDynLib.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFNetClientModule.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\..\NFComm\NFNetPlugin\NFNetModule.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+    </ClCompile>
     <ClCompile Include="..\..\..\NFComm\NFPluginLoader\NFCoroutineManager.cpp" />
-    <ClCompile Include="..\..\..\NFComm\NFPluginLoader\NFCPluginManager.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFPluginLoader\NFDynLib.cpp" />
+    <ClCompile Include="..\..\..\NFComm\NFPluginLoader\NFPluginManager.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCChatLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCLogicBase.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCLogicPlugin.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCLoginLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCNetLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCPlayerLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCPropertyLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\Logic\NFCRecordLogic.cpp" />
-    <ClCompile Include="..\Classes\NF\NFCClientPlugin.cpp" />
-    <ClCompile Include="..\Classes\NF\NFCRoot.cpp" />
-    <ClCompile Include="..\Classes\NF\Scene\NFCGameScene.cpp" />
-    <ClCompile Include="..\Classes\NF\Scene\NFCSceneManager.cpp" />
-    <ClCompile Include="..\Classes\NF\Scene\NFCScenePlugin.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUIChatPanel.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUIDialog.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUILogin.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUIManager.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUIPlugin.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUISelectRole.cpp" />
-    <ClCompile Include="..\Classes\NF\UI\NFCUISelectServer.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFChatLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFLogicBase.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFLogicPlugin.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFLoginLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFNetLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFPlayerLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFPropertyLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\Logic\NFRecordLogic.cpp" />
+    <ClCompile Include="..\Classes\NF\NFClientPlugin.cpp" />
+    <ClCompile Include="..\Classes\NF\NFRoot.cpp" />
+    <ClCompile Include="..\Classes\NF\Scene\NFGameScene.cpp" />
+    <ClCompile Include="..\Classes\NF\Scene\NFSceneManager.cpp" />
+    <ClCompile Include="..\Classes\NF\Scene\NFScenePlugin.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUIChatPanel.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUIDialog.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUILogin.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUIManager.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUIPlugin.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUISelectRole.cpp" />
+    <ClCompile Include="..\Classes\NF\UI\NFUISelectServer.cpp" />
     <ClCompile Include="..\Classes\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</ForcedIncludeFiles>
@@ -857,16 +856,11 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\..\..\Dependencies\protobuf\src\google\protobuf\util\type_resolver_util.h" />
     <ClInclude Include="..\..\..\Dependencies\protobuf\src\google\protobuf\wire_format.h" />
     <ClInclude Include="..\..\..\Dependencies\protobuf\src\google\protobuf\wrappers.pb.h" />
-    <ClInclude Include="..\..\..\NFComm\NFConfigPlugin\NFCClassModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFConfigPlugin\NFCElementModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFConfigPlugin\NFClassModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFConfigPlugin\NFElementModule.h" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFBox.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFCConsistentHash.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFCMemManager.hpp" />
-    <ClInclude Include="..\..\..\NFComm\NFCore\NFCObject.h" />
-    <ClInclude Include="..\..\..\NFComm\NFCore\NFCProperty.h" />
-    <ClInclude Include="..\..\..\NFComm\NFCore\NFCPropertyManager.h" />
-    <ClInclude Include="..\..\..\NFComm\NFCore\NFCRecord.h" />
-    <ClInclude Include="..\..\..\NFComm\NFCore\NFCRecordManager.h" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFDataList.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFDateTime.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFException.hpp" />
@@ -881,18 +875,22 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\..\..\NFComm\NFCore\NFList.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFMapEx.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFMemoryCounter.hpp" />
+    <ClInclude Include="..\..\..\NFComm\NFCore\NFObject.h" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFPlane.hpp" />
+    <ClInclude Include="..\..\..\NFComm\NFCore\NFProperty.h" />
+    <ClInclude Include="..\..\..\NFComm\NFCore\NFPropertyManager.h" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFRay.hpp" />
+    <ClInclude Include="..\..\..\NFComm\NFCore\NFRecord.h" />
+    <ClInclude Include="..\..\..\NFComm\NFCore\NFRecordManager.h" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFSingleton.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFSpaceNode.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFSphere.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFVector2.hpp" />
     <ClInclude Include="..\..\..\NFComm\NFCore\NFVector3.hpp" />
-    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFCEventModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFCKernelModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFCSceneAOIModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFCScheduleModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFLogPlugin\NFCLogModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFEventModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFKernelModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFKernelPlugin\NFScheduleModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFLogPlugin\NFLogModule.h" />
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFDefine.pb.h" />
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFLimit.h" />
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFMsgBase.pb.h" />
@@ -900,34 +898,34 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFMsgPreGame.pb.h" />
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFMsgShare.pb.h" />
     <ClInclude Include="..\..\..\NFComm\NFMessageDefine\NFProtocolDefine.hpp" />
-    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFCNet.h" />
-    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFCNetClientModule.h" />
-    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFCNetModule.h" />
     <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFINet.h" />
-    <ClInclude Include="..\..\..\NFComm\NFPluginLoader\NFCDynLib.h" />
+    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFNet.h" />
+    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFNetClientModule.h" />
+    <ClInclude Include="..\..\..\NFComm\NFNetPlugin\NFNetModule.h" />
     <ClInclude Include="..\..\..\NFComm\NFPluginLoader\NFCoroutineManager.h" />
-    <ClInclude Include="..\..\..\NFComm\NFPluginLoader\NFCPluginManager.h" />
+    <ClInclude Include="..\..\..\NFComm\NFPluginLoader\NFDynLib.h" />
+    <ClInclude Include="..\..\..\NFComm\NFPluginLoader\NFPluginManager.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCChatLogic.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCLogicBase.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCLogicPlugin.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCLoginLogic.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCNetLogic.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCPlayerLogic.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCPropertyLogic.h" />
-    <ClInclude Include="..\Classes\NF\Logic\NFCRecordLogic.h" />
-    <ClInclude Include="..\Classes\NF\NFCClientPlugin.h" />
-    <ClInclude Include="..\Classes\NF\NFCRoot.h" />
-    <ClInclude Include="..\Classes\NF\Scene\NFCGameScene.h" />
-    <ClInclude Include="..\Classes\NF\Scene\NFCSceneManager.h" />
-    <ClInclude Include="..\Classes\NF\Scene\NFCScenePlugin.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUIChatPanel.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUIDialog.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUILogin.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUIManager.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUIPlugin.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUISelectRole.h" />
-    <ClInclude Include="..\Classes\NF\UI\NFCUISelectServer.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFChatLogic.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFLogicBase.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFLogicPlugin.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFLoginLogic.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFNetLogic.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFPlayerLogic.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFPropertyLogic.h" />
+    <ClInclude Include="..\Classes\NF\Logic\NFRecordLogic.h" />
+    <ClInclude Include="..\Classes\NF\NFClientPlugin.h" />
+    <ClInclude Include="..\Classes\NF\NFRoot.h" />
+    <ClInclude Include="..\Classes\NF\Scene\NFGameScene.h" />
+    <ClInclude Include="..\Classes\NF\Scene\NFSceneManager.h" />
+    <ClInclude Include="..\Classes\NF\Scene\NFScenePlugin.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUIChatPanel.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUIDialog.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUILogin.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUIManager.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUIPlugin.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUISelectRole.h" />
+    <ClInclude Include="..\Classes\NF\UI\NFUISelectServer.h" />
     <ClInclude Include="..\Classes\stdafx.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>

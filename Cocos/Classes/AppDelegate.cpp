@@ -1,5 +1,5 @@
 #include "AppDelegate.h"
-#include "NF/NFCRoot.h"
+#include "NF/NFRoot.h"
 
 USING_NS_CC;
 
@@ -74,7 +74,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = NFCRoot::scene();
+    auto scene = NFRoot::scene();
     // run
     director->runWithScene(scene);
 
